@@ -124,6 +124,7 @@ typedef struct
     unsigned char data4;
     unsigned char footer;
     unsigned char valid;
+    int numInvalid;
 } MESSAGE_FORMAT;
 
 // *****************************************************************************

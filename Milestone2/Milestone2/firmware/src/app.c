@@ -302,23 +302,10 @@ debugChar(0x04);
             s2msg = sensor2ReceiveVal();
             s3msg = sensor3ReceiveVal();
             s4msg = sensor4ReceiveVal();
-            unsigned char buffer[10] = {0x81,0x10,0x00,0x00,0x00,0x11,0x22,0x33,0x44,0x88};
+            unsigned char buffer[10] = {0x81,0x10,0x00,0x00,0x00,s1msg,s2msg,s3msg,s4msg,0x88};
             
-            receiveMsgFormat(buffer);
-//            debugChar(0x55);
-//            debugChar(msgFormat.footer);
-//            debugBuffer("jelloworld",10);
+            sendMsgToWIFLY(buffer);
             //stopEverything();
-            sendByteToWIFLY(0x81);
-            sendByteToWIFLY(0x01);
-            sendByteToWIFLY(0x02);
-            sendByteToWIFLY(0x03);
-            sendByteToWIFLY(0x04);
-            sendByteToWIFLY(0x05);
-            sendByteToWIFLY(0x06);
-            sendByteToWIFLY(0x07);
-            sendByteToWIFLY(0x08);
-            sendByteToWIFLY(0x88);
             break;
         }
         /* The default state should never be executed. */
