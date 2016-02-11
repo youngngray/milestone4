@@ -128,7 +128,7 @@ void stopEverything( void )
 {
     PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_E,  0x21);
     PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_A,  0x08);
-    vTaskSuspend(NULL);
+    vTaskSuspendAll();
     for(;;){}
 }
 

@@ -65,6 +65,9 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "app.h"
 #include "debugging_task.h"
 #include "messaging_task.h"
+#include "sensor2.h"
+#include "sensor3.h"
+#include "sensor4.h"
 #include "system_definitions.h"
 
 // *****************************************************************************
@@ -74,7 +77,6 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 void IntHandlerDrvAdc(void)
 {
-    DRV_ADC_Stop();
     unsigned char sensorRead;
     unsigned char temp;
 #ifdef MACRO_DEBUG
@@ -85,15 +87,18 @@ debugCharFromISR(0x05);
         //Read from the sensor
         sensorRead = DRV_ADC_SamplesRead(0);
         
-        temp = sensorRead/25.6;
+        temp = sensorRead;
         //Send the data to the Sensor Queue
-        app1SendSensorValToSensorQ(temp);
+        sensor1SendSensorValToSensorQ(temp);
+        sensor2SendSensorValToSensorQ(0x0A);
+        sensor3SendSensorValToSensorQ(0x0B);
+        sensor4SendSensorValToSensorQ(0x0C);
     }
     /* Clear ADC Interrupt Flag */
 #ifdef MACRO_DEF
 debugCharFromISR(0x06);  
 #endif
-    DRV_ADC_Stop();
+    PLIB_ADC_SampleAutoStartDisable(DRV_ADC_ID_1);
     PLIB_INT_SourceDisable(INT_ID_0, INT_SOURCE_ADC_1);
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_ADC_1);
 }
@@ -113,15 +118,22 @@ void IntHandlerDrvUsartInstance0(void)
     }    
     else//(PLIB_USART_ReceiverDataIsAvailable(USART_ID_1));
     {
-        //stopEverything();
-        unsigned char byte = PLIB_USART_ReceiverByteReceive(USART_ID_1);
-        ReceiveUSARTMsgFromMsgQ(byte);
+        PLIB_INT_SourceDisable(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
     }
-    PLIB_INT_SourceDisable(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
+    if(PLIB_USART_ReceiverDataIsAvailable(USART_ID_1))
+    {
+        //stopEverything();
+        unsigned char byte = 0x00; 
+        byte= PLIB_USART_ReceiverByteReceive(USART_ID_1);
+//        sendByteToWIFLY(byte);
+        ReceiveUSARTMsgFromMsgQ(byte);
+//        PLIB_USART_TransmitterByteSend(USART_ID_1, byte);
+        //unsigned char byte = 0x00; 
+        //byte= PLIB_USART_ReceiverByteReceive(USART_ID_1);
+    }
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_USART_1_RECEIVE);
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_USART_1_ERROR);
-
 }
 
  

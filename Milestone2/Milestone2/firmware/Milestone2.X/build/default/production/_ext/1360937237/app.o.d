@@ -185,4 +185,7 @@ build/default/production/_ext/1360937237/app.o:  \
  ../../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include/queue.h  \
  ../src/debugging_task_public.h  \
 ../src/messaging_task.h  \
- ../src/app_public.h 
+../src/sensor2.h  \
+ ../src/sensor3.h  \
+../src/sensor4.h  \
+../src/app_public.h 

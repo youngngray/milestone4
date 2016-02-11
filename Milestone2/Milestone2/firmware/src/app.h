@@ -91,11 +91,11 @@ extern "C" {
 typedef enum
 {
 	/* Application's state machine's initial state. */
-	APP_STATE_INIT=0,
+	SENSOR1_STATE_INIT=0,
 
 	/* TODO: Define states used by the application state machine. */
-    APP_STATE_OUTPUT = 1,
-} APP_STATES;
+    SENSOR1_STATE_OUTPUT = 1,
+} SENSOR1_STATES;
 
 
 // *****************************************************************************
@@ -114,7 +114,7 @@ typedef enum
 typedef struct
 {
     /* The application's current state */
-    APP_STATES state;
+    SENSOR1_STATES state;
     
     //Handle to the local queue
     QueueHandle_t local_q;
@@ -124,8 +124,21 @@ typedef struct
     
     //The character to output
     unsigned char blink;
+} SENSOR1_DATA;
 
-} APP_DATA;
+typedef struct
+{
+    unsigned char header;
+    unsigned char dst;
+    unsigned char type;
+    unsigned char msgNum1;
+    unsigned char msgNum2;
+    unsigned char data1;
+    unsigned char data2;
+    unsigned char data3;
+    unsigned char data4;
+    unsigned char footer;
+} MSG_FORMAT;
 
 
 // *****************************************************************************
@@ -201,7 +214,7 @@ void vTimerCallback( TimerHandle_t pxTimer );
     This routine must be called from the SYS_Initialize function.
 */
 
-void APP_Initialize ( void );
+void SENSOR1_Initialize ( void );
 
 
 /*******************************************************************************
@@ -234,7 +247,7 @@ void APP_Initialize ( void );
     This routine must be called from SYS_Tasks() routine.
  */
 
-void APP_Tasks( void );
+void SENSOR1_Tasks( void );
 
 
 

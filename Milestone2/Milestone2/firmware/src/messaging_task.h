@@ -52,6 +52,7 @@ typedef enum
 	/* TODO: Define states used by the application state machine. */
     MESSAGING_TASK_STATE_RUN = 1,
 
+    MESSAGING_TASK_STATE_READ = 2,
 } MESSAGING_TASK_STATES;
 
 char isQueueEmpty();
@@ -107,6 +108,23 @@ typedef struct
     QueueHandle_t receiveMsg_q;
 } MESSAGING_TASK_DATA;
 
+typedef struct
+{
+    int count;
+    int validHeader;
+    int validFooter;
+    unsigned char header;
+    unsigned char dst;
+    unsigned char type;
+    unsigned char msgNum1;
+    unsigned char msgNum2;
+    unsigned char data1;
+    unsigned char data2;
+    unsigned char data3;
+    unsigned char data4;
+    unsigned char footer;
+    unsigned char valid;
+} MESSAGE_FORMAT;
 
 // *****************************************************************************
 // *****************************************************************************
