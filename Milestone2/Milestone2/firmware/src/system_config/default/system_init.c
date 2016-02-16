@@ -191,7 +191,7 @@ void SYS_Initialize ( void* data )
     /* Initialize Middleware */
 
     /* Initialize the Application */
-    SENSOR1_Initialize();
+    APP_Initialize();
     DEBUGGING_TASK_Initialize();
     MESSAGING_TASK_Initialize();
     SENSOR2_Initialize();

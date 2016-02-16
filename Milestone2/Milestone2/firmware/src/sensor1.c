@@ -5,7 +5,7 @@
     Microchip Technology Inc.
   
   File Name:
-    sensor4.c
+    sensor1.c
 
   Summary:
     This file contains the source code for the MPLAB Harmony application.
@@ -53,7 +53,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 // *****************************************************************************
 
-#include "sensor4.h"
+#include "sensor1.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -76,7 +76,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
     Application strings and buffers are be defined outside this structure.
 */
 
-SENSOR4_DATA sensor4Data;
+SENSOR1_DATA sensor1Data;
 
 // *****************************************************************************
 // *****************************************************************************
@@ -95,44 +95,8 @@ SENSOR4_DATA sensor4Data;
 
 /* TODO:  Add any necessary local functions.
 */
-//Puts an unsigned int in milliseconds into the queue
-//Returns 0 if successful and 1 if failed
-int sensor4SendTimerValToMsgQ(unsigned int millisecondsElapsed)
-{
-    BaseType_t err_code;
-    err_code = xQueueSendToBack( sensor4Data.local_q, &millisecondsElapsed,
-                                   portMAX_DELAY );
-    if(err_code == pdTRUE)
-        return 0;
-    else if(err_code == errQUEUE_FULL)
-        return 1;
-}
 
-void sensor4SendSensorValToSensorQ(unsigned char sensorValue)
-{
-#ifdef MACRO_DEBUG
-    debugChar(0x01);
-#endif 
-    //debugChar(sensorValue);
-    xQueueSendFromISR( sensor4Data.sensor4_q, &sensorValue,
-                                   NULL );
-#ifdef MACRO_DEBUG
-    debugChar(0x02);
-#endif
-}
-unsigned char sensor4ReceiveVal()
-{
-    unsigned char sensorRead;
-    BaseType_t sensorReceived;
-    sensorReceived = xQueueReceive(sensor4Data.sensor4_q , &sensorRead, portMAX_DELAY);
-    //debugChar(sensorRead);
-    //If not received, stop and turn on LED.
-    if(sensorReceived == pdFALSE)
-    {
-        stopEverything();
-    }
-    return sensorRead;
-}
+
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application Initialization and State Machine Functions
@@ -141,108 +105,43 @@ unsigned char sensor4ReceiveVal()
 
 /*******************************************************************************
   Function:
-    void SENSOR4_Initialize ( void )
+    void SENSOR1_Initialize ( void )
 
   Remarks:
-    See prototype in sensor4.h.
+    See prototype in sensor1.h.
  */
 
-void SENSOR4_Initialize ( void )
+void SENSOR1_Initialize ( void )
 {
-   //stopEverything();
     /* Place the App state machine in its initial state. */
-    sensor4Data.state = SENSOR4_STATE_INIT;
+    sensor1Data.state = SENSOR1_STATE_INIT;
     
     /* TODO: Initialize your application's state machine and other
      * parameters.
      */
-    //Create the queue
-    sensor4Data.local_q = xQueueCreate(10, sizeof(unsigned int));
-    //Ensure queue was created. If not, do not continue and turn on LED
-    if(sensor4Data.local_q == 0)
-    {
-        stopEverything();
-    }
-    sensor4Data.sensor4_q = xQueueCreate(100, sizeof(unsigned char));
-    if(sensor4Data.sensor4_q == 0)
-    {
-        stopEverything();
-    }
-    //stopEverything();
-    //Create the timer
-    sensor4Data.local_timer = xTimerCreate( "50msTimer",
-                50 / portTICK_PERIOD_MS,
-                pdTRUE,
-                0,
-                vTimerCallback );
-    
-    //Ensure timer was created. If not, do not continue and turn on LED
-    if(sensor4Data.local_timer == 0)
-    {
-        stopEverything();
-    }
-    BaseType_t started = xTimerStart(sensor4Data.local_timer, 0);
-    
-    //Ensure the timer started successfully. If not, do not continue and turn
-    // on LED
-    if(started == pdFAIL)
-    {
-        stopEverything();
-    }   
-    
-    /* Initialization is done, allow the state machine to continue */
-    sensor4Data.state = APP_STATE_OUTPUT;
 }
 
 
 /******************************************************************************
   Function:
-    void SENSOR4_Tasks ( void )
+    void SENSOR1_Tasks ( void )
 
   Remarks:
-    See prototype in sensor4.h.
+    See prototype in sensor1.h.
  */
 
-void SENSOR4_Tasks ( void )
+void SENSOR1_Tasks ( void )
 {
     /* Check the application's current state. */
-    switch ( sensor4Data.state )
+    switch ( sensor1Data.state )
     {
         /* Application's initial state. */
-        case SENSOR4_STATE_INIT:
+        case SENSOR1_STATE_INIT:
         {
             break;
         }
 
-                /* TODO: implement your application state machine.*/
-        case SENSOR2_STATE_OUTPUT:
-        {
-            //stopEverything();
-            //Receive Information from the Queue
-#ifdef MACRO_DEBUG
-debugChar(0x0C);
-#endif 
-            //Number of elapsed ms.
-            unsigned int ms;
-            BaseType_t received = xQueueReceive(sensor4Data.local_q , &ms, portMAX_DELAY);
-            //If not received, stop and turn on LED.
-            if(received == pdFALSE)
-            {
-                stopEverything();
-            }
-            
-            //Read a value from the xQueue every 10ms
-            //unsigned char sensorRead;
-            //BaseType_t sensorReceived;
-
-            //sensorReceived = xQueueReceive(sensor4Data.sensor4_q , &sensorRead, portMAX_DELAY);
-            //debugChar(sensorRead);
-
-#ifdef MACRO_DEBUG
-debugChar(0x0D);
-#endif
-            break;
-        }
+        /* TODO: implement your application state machine.*/
 
         /* The default state should never be executed. */
         default:

@@ -1,11 +1,11 @@
 /*******************************************************************************
- Task to demonstrate debug output
+  MPLAB Harmony Application Header File
 
   Company:
     Microchip Technology Inc.
 
   File Name:
-    app.h
+    sensor1.h
 
   Summary:
     This header file provides prototypes and definitions for the application.
@@ -43,8 +43,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
  *******************************************************************************/
 //DOM-IGNORE-END
 
-#ifndef _APP_H
-#define _APP_H
+#ifndef _SENSOR1_H
+#define _SENSOR1_H
 
 // *****************************************************************************
 // *****************************************************************************
@@ -58,10 +58,6 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include <stdlib.h>
 #include "system_config.h"
 #include "system_definitions.h"
-
-#include "queue.h"
-#include "timers.h"
-#include "debugging_task_public.h"
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
@@ -91,11 +87,11 @@ extern "C" {
 typedef enum
 {
 	/* Application's state machine's initial state. */
-	APP_STATE_INIT=0,
+	SENSOR1_STATE_INIT=0,
 
 	/* TODO: Define states used by the application state machine. */
-    APP_STATE_OUTPUT = 1,
-} APP_STATES;
+
+} SENSOR1_STATES;
 
 
 // *****************************************************************************
@@ -114,31 +110,12 @@ typedef enum
 typedef struct
 {
     /* The application's current state */
-    APP_STATES state;
-    
-    //Handle to the local queue
-    QueueHandle_t local_q;
-    QueueHandle_t sensor1_q;
-    //Handle to the local timer used
-    TimerHandle_t local_timer;
-    
-    //The character to output
-    unsigned char blink;
-} APP_DATA;
+    SENSOR1_STATES state;
 
-typedef struct
-{
-    unsigned char header;
-    unsigned char dst;
-    unsigned char type;
-    unsigned char msgNum1;
-    unsigned char msgNum2;
-    unsigned char data1;
-    unsigned char data2;
-    unsigned char data3;
-    unsigned char data4;
-    unsigned char footer;
-} MSG_FORMAT;
+    /* TODO: Define any additional data used by the application. */
+
+
+} SENSOR1_DATA;
 
 
 // *****************************************************************************
@@ -149,33 +126,6 @@ typedef struct
 /* These routines are called by drivers when certain events occur.
 */
 
-/*******************************************************************************
-  Function:
-    void vTimerCallback( TimerHandle_t pxTimer )
-
-  Summary:
- Callback routine for the local timer
-
-  Description:
-    This function is called whenever the timer rolls over. This happens
- once per 50ms. It then sends a time value to the local queue.
-
-  Precondition:
- The timer should be setup to call this routine.
-
-  Parameters:
-    None.
-
-  Returns:
-    None.
-
-  Example:
- None.
-
-  Remarks:
-    This routine must be called from the timer.
-*/
-void vTimerCallback( TimerHandle_t pxTimer );
 	
 // *****************************************************************************
 // *****************************************************************************
@@ -185,7 +135,7 @@ void vTimerCallback( TimerHandle_t pxTimer );
 
 /*******************************************************************************
   Function:
-    void APP_Initialize ( void )
+    void SENSOR1_Initialize ( void )
 
   Summary:
      MPLAB Harmony application initialization routine.
@@ -207,19 +157,19 @@ void vTimerCallback( TimerHandle_t pxTimer );
 
   Example:
     <code>
-    APP_Initialize();
+    SENSOR1_Initialize();
     </code>
 
   Remarks:
     This routine must be called from the SYS_Initialize function.
 */
 
-void APP_Initialize ( void );
+void SENSOR1_Initialize ( void );
 
 
 /*******************************************************************************
   Function:
-    void APP_Tasks ( void )
+    void SENSOR1_Tasks ( void )
 
   Summary:
     MPLAB Harmony Demo application tasks function
@@ -240,18 +190,17 @@ void APP_Initialize ( void );
 
   Example:
     <code>
-    APP_Tasks();
+    SENSOR1_Tasks();
     </code>
 
   Remarks:
     This routine must be called from SYS_Tasks() routine.
  */
 
-void APP_Tasks( void );
+void SENSOR1_Tasks( void );
 
 
-
-#endif /* _APP_H */
+#endif /* _SENSOR1_H */
 
 //DOM-IGNORE-BEGIN
 #ifdef __cplusplus

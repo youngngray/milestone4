@@ -231,25 +231,15 @@ debugChar(0x08);
             }
             
             //Read a value from the xQueue every 10ms
-            unsigned char sensorRead;
-            BaseType_t sensorReceived;
+            //unsigned char sensorRead;
+            //BaseType_t sensorReceived;
 
-            sensorReceived = xQueueReceive(sensor2Data.sensor2_q , &sensorRead, portMAX_DELAY);
+            //sensorReceived = xQueueReceive(sensor2Data.sensor2_q , &sensorRead, portMAX_DELAY);
             //debugChar(sensorRead);
 
 #ifdef MACRO_DEBUG
 debugChar(0x09);
 #endif
-            //If not received, stop and turn on LED.
-            if(sensorReceived == pdFALSE)
-            {
-                stopEverything();
-            }
-            if(ms % 100 == 0)
-            {
-                
-            }
-            
             break;
         }
         /* The default state should never be executed. */

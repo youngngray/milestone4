@@ -69,7 +69,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
  
 static void _SYS_Tasks ( void );
-static void _SENSOR1_Tasks(void);
+static void _APP_Tasks(void);
 static void _DEBUGGING_TASK_Tasks(void);
 static void _MESSAGING_TASK_Tasks(void);
 static void _SENSOR2_Tasks(void);
@@ -98,9 +98,9 @@ void SYS_Tasks ( void )
                 "Sys Tasks",
                 1024, NULL, 0, NULL);
 
-    /* Create OS Thread for SENSOR1 Tasks. */
-    xTaskCreate((TaskFunction_t) _SENSOR1_Tasks,
-                "SENSOR1 Tasks",
+    /* Create OS Thread for APP Tasks. */
+    xTaskCreate((TaskFunction_t) _APP_Tasks,
+                "APP Tasks",
                 1024, NULL, 1, NULL);
 
     /* Create OS Thread for DEBUGGING_TASK Tasks. */
@@ -161,17 +161,17 @@ static void _SYS_Tasks ( void )
 
 /*******************************************************************************
   Function:
-    void _SENSOR1_Tasks ( void )
+    void _APP_Tasks ( void )
 
   Summary:
-    Maintains state machine of SENSOR1.
+    Maintains state machine of APP.
 */
 
-static void _SENSOR1_Tasks(void)
+static void _APP_Tasks(void)
 {
     while(1)
     {
-        SENSOR1_Tasks();
+        APP_Tasks();
     }
 }
 

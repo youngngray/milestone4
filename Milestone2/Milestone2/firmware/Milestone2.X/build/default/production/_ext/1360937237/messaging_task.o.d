@@ -1,5 +1,6 @@
-build/default/production/_ext/639803181/sys_clk_static.o:  \
- ../src/system_config/default/framework/system/clk/src/sys_clk_static.c  \
+build/default/production/_ext/1360937237/messaging_task.o:  \
+ ../src/messaging_task.c  \
+../src/messaging_task.h  \
  ../src/system_config/default/system_config.h  \
  ../src/system_config/default/system_definitions.h  \
  ../../../../../../../../../microchip/harmony/v1_06_02/framework/system/common/sys_common.h  \
@@ -186,4 +187,5 @@ build/default/production/_ext/639803181/sys_clk_static.o:  \
  ../src/messaging_task.h  \
 ../src/sensor2.h  \
 ../src/sensor3.h  \
- ../src/sensor4.h 
+ ../src/sensor4.h  \
+../src/messaging_task_public.h 

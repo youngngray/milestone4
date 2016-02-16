@@ -120,7 +120,19 @@ void sensor3SendSensorValToSensorQ(unsigned char sensorValue)
     debugChar(0x02);
 #endif
 }
-
+unsigned char sensor3ReceiveVal()
+{
+    unsigned char sensorRead;
+    BaseType_t sensorReceived;
+    sensorReceived = xQueueReceive(sensor3Data.sensor3_q , &sensorRead, portMAX_DELAY);
+    //debugChar(sensorRead);
+    //If not received, stop and turn on LED.
+    if(sensorReceived == pdFALSE)
+    {
+        stopEverything();
+    }
+    return sensorRead;
+}
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application Initialization and State Machine Functions
@@ -180,20 +192,6 @@ void SENSOR3_Initialize ( void )
     /* Initialization is done, allow the state machine to continue */
     sensor3Data.state = SENSOR3_STATE_OUTPUT;
 }
-unsigned char sensor3ReceiveVal()
-{
-    unsigned char sensorRead;
-    BaseType_t sensorReceived;
-    sensorReceived = xQueueReceive(sensor3Data.sensor3_q , &sensorRead, portMAX_DELAY);
-    //debugChar(sensorRead);
-    //If not received, stop and turn on LED.
-    if(sensorReceived == pdFALSE)
-    {
-        stopEverything();
-    }
-    return sensorRead;
-}
-
 /******************************************************************************
   Function:
     void SENSOR3_Tasks ( void )
@@ -231,25 +229,15 @@ debugChar(0x0A);
             }
             
             //Read a value from the xQueue every 10ms
-            unsigned char sensorRead;
-            BaseType_t sensorReceived;
+            //unsigned char sensorRead;
+            //BaseType_t sensorReceived;
 
-            sensorReceived = xQueueReceive(sensor3Data.sensor3_q , &sensorRead, portMAX_DELAY);
+            //sensorReceived = xQueueReceive(sensor3Data.sensor3_q , &sensorRead, portMAX_DELAY);
             //debugChar(sensorRead);
 
 #ifdef MACRO_DEBUG
 debugChar(0x0B);
 #endif
-            //If not received, stop and turn on LED.
-            if(sensorReceived == pdFALSE)
-            {
-                stopEverything();
-            }
-            if(ms % 100 == 0)
-            {
-                
-            }
-            
             break;
         }
 

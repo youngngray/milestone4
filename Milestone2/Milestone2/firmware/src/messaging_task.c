@@ -217,7 +217,9 @@ void MESSAGING_TASK_Tasks ( void )
             if((temp == 0x81) && (msg_Format.count == 0))
             {
 //                sendByteToWIFLY(temp);
+#ifdef MACRO_DEBUG
                 debugChar(0xD1);
+#endif
                 //sendByteToWIFLY(msg_Format.header);
                 msg_Format.validHeader = 5;
                 msg_Format.header = temp;
@@ -227,7 +229,9 @@ void MESSAGING_TASK_Tasks ( void )
             {
                 //Invalid Message
 //                sendByteToWIFLY(temp);
+#ifdef MACRO_DEBUG
                 debugChar(0xF3);
+#endif
                 msg_Format.numInvalid++;
                 //sendMsgToWIFLY("NO\t");
                 sendByteToWIFLY(msg_Format.numInvalid);
@@ -238,45 +242,63 @@ void MESSAGING_TASK_Tasks ( void )
             }
             if((msg_Format.validHeader == 5) && (msg_Format.count != 0))
             {
+#ifdef MACRO_DEBUG
                 debugChar(0xEE);
+#endif
 //                sendByteToWIFLY(temp);
                 if(msg_Format.count == 2){
+#ifdef MACRO_DEBUG
                     debugChar(0xD2);
+#endif
 //                    sendByteToWIFLY(temp);
                     msg_Format.dst = temp;
                 }
                 else if(msg_Format.count == 3) {
+#ifdef MACRO_DEBUG
                     debugChar(0xD3);
+#endif
 //                    sendByteToWIFLY(temp);
                     msg_Format.type = temp;
                 }
                 else if(msg_Format.count == 4) {
+#ifdef MACRO_DEBUG
                     debugChar(0xD4);
+#endif
 //                    sendByteToWIFLY(temp);
                     msg_Format.msgNum1 = temp;
                 }
                 else if(msg_Format.count == 5) {
+#ifdef MACRO_DEBUG
                     debugChar(0xD5);
+#endif
 //                    sendByteToWIFLY(temp);
                     msg_Format.msgNum2 = temp;
                 }
                 else if(msg_Format.count == 6) {
+#ifdef MACRO_DEBUG
                     debugChar(0xD6);
+#endif
 //                    sendByteToWIFLY(temp);
                     msg_Format.data1 = temp;
                 }
                 else if(msg_Format.count == 7) {
+#ifdef MACRO_DEBUG
                     debugChar(0xD7);
+#endif
 //                    sendByteToWIFLY(temp);
                     msg_Format.data2 = temp;
                 }
                 else if(msg_Format.count == 8) {
+#ifdef MACRO_DEBUG
                     debugChar(0xD8);
+#endif
 //                    sendByteToWIFLY(temp);
                     msg_Format.data3 = temp;
                 }
                 else if(msg_Format.count == 9) {
+#ifdef MACRO_DEBUG
                     debugChar(0xD9);
+#endif
 //                    sendByteToWIFLY(temp);
                     msg_Format.data4 = temp;
                     
@@ -285,7 +307,9 @@ void MESSAGING_TASK_Tasks ( void )
             }
             if((msg_Format.validHeader == 5)&&(temp == 0x88)&&(msg_Format.count == 11))
             {
+#ifdef MACRO_DEBUG
                 debugChar(0xE0);
+#endif
 //                sendByteToWIFLY(temp);
                 msg_Format.footer = temp;
                 msg_Format.validFooter = 5;
@@ -293,7 +317,9 @@ void MESSAGING_TASK_Tasks ( void )
             }
             else if((msg_Format.count == 11) && (msg_Format.validHeader == 5) && (temp != 0x88))
             {
+#ifdef MACRO_DEBUG
                 debugChar(0xF1);
+#endif
                 //sendByteToWIFLY(0xF1);
                 msg_Format.numInvalid++;              
                 //sendMsgToWIFLY("NO\t");
@@ -324,6 +350,7 @@ void MESSAGING_TASK_Tasks ( void )
         }
         case MESSAGING_TASK_STATE_READ:
         {
+#ifdef MACRO_DEBUG
             debugChar(msg_Format.header);
             debugChar(msg_Format.dst);
             debugChar(msg_Format.type);
@@ -334,7 +361,7 @@ void MESSAGING_TASK_Tasks ( void )
             debugChar(msg_Format.data3);
             debugChar(msg_Format.data4);
             debugChar(msg_Format.footer);
-            
+#endif
             sendByteToWIFLY(msg_Format.header);
             sendByteToWIFLY(msg_Format.dst);
             sendByteToWIFLY(msg_Format.type);
