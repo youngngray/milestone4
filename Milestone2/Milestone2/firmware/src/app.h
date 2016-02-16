@@ -119,6 +119,7 @@ typedef struct
     //Handle to the local queue
     QueueHandle_t local_q;
     QueueHandle_t sensor1_q;
+    QueueHandle_t data_q;
     //Handle to the local timer used
     TimerHandle_t local_timer;
     
@@ -139,8 +140,8 @@ typedef struct
     unsigned char data4;
     unsigned char footer;
 } MSG_FORMAT;
-
-
+unsigned char d;
+int step;
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application Callback Routines

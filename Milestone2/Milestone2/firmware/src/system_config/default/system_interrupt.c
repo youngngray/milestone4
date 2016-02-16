@@ -65,48 +65,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "app.h"
 #include "debugging_task.h"
 #include "messaging_task.h"
-#include "sensor2.h"
-#include "sensor3.h"
-#include "sensor4.h"
 #include "system_definitions.h"
-
-// *****************************************************************************
-// *****************************************************************************
-// Section: System Interrupt Vector Functions
-// *****************************************************************************
-// *****************************************************************************
-void IntHandlerDrvAdc(void)
-{
-    DRV_ADC_Stop();
-    unsigned char sensorRead;
-    unsigned char temp;
-
-#ifdef MACRO_DEBUG
-debugCharFromISR(0x05);
-#endif
-    //Check to see if samples are available
-    if (DRV_ADC_SamplesAvailable()) {   
-
-        //Read from the sensor
-        sensorRead = DRV_ADC_SamplesRead(0);      
-        temp = sensorRead/25.6;
-        debugCharFromISR(temp);
-        //Send the data to the Sensor Queue
-        sensor1SendSensorValToSensorQ(temp);
-        sensor2SendSensorValToSensorQ(0x0A);
-        sensor3SendSensorValToSensorQ(0x0B);
-        sensor4SendSensorValToSensorQ(0x0C);
-    }
-    /* Clear ADC Interrupt Flag */
-#ifdef MACRO_DEBUG
-debugCharFromISR(0x06);  
-#endif
-//stopEverything();
-    //PLIB_ADC_SampleAutoStartDisable(DRV_ADC_ID_1);
-    DRV_ADC_Stop();
-    PLIB_INT_SourceDisable(INT_ID_0, INT_SOURCE_ADC_1);
-    PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_ADC_1);
-}
 
 
 
@@ -119,7 +78,9 @@ void IntHandlerDrvUsartInstance0(void)
     {
         unsigned char data = 0x00;
         data = messageQ();
+        debugChar(before_usart_transmit);
         PLIB_USART_TransmitterByteSend(USART_ID_1, data);
+        debugChar(after_usart_transmit);
     }    
     else//(PLIB_USART_ReceiverDataIsAvailable(USART_ID_1));
     {

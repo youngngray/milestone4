@@ -62,11 +62,10 @@ extern "C" {
         @code
         app1SendTimerValToMsgQ(100);
      */
-    int sensor1SendTimerValToMsgQ(unsigned int millisecondsElapsed);
     
-    void sensor1SendSensorValToSensorQ(unsigned char sensorValue);
     
-    unsigned char sensor1ReceiveVal();
+    void pushDataQ(unsigned char dataValue);
+    
     /* Provide C++ Compatibility */
 #ifdef __cplusplus
 }

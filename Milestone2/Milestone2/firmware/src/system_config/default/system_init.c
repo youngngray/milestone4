@@ -181,8 +181,6 @@ void SYS_Initialize ( void* data )
     SYS_PORTS_Initialize();
 
     /* Initialize Drivers */
-    /* Initialize ADC */
-    DRV_ADC_Initialize();
     DRV_USART0_Initialize();
 
     /* Initialize System Services */
@@ -194,9 +192,6 @@ void SYS_Initialize ( void* data )
     APP_Initialize();
     DEBUGGING_TASK_Initialize();
     MESSAGING_TASK_Initialize();
-    SENSOR2_Initialize();
-    SENSOR3_Initialize();
-    SENSOR4_Initialize();
 }
 
 

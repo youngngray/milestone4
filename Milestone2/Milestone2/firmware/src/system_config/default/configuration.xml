@@ -145,14 +145,6 @@
     </Files>
     <Templates>
       <Template>
-        <Name>sensor2.c</Name>
-        <Path>Source Files/app</Path>
-      </Template>
-      <Template>
-        <Name>sensor3.c</Name>
-        <Path>Source Files/app</Path>
-      </Template>
-      <Template>
         <Name>sys_ports_static.c</Name>
         <Path>Source Files/app/system_config/default/framework/system/ports/src</Path>
         <Checksum>EA425DBB02818CEF28D6D454B7F2C73B</Checksum>
@@ -160,21 +152,7 @@
       <Template>
         <Name>system_interrupt_a.S</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>2AADE7885E66E00DBB7FE911439FFA49</Checksum>
-      </Template>
-      <Template>
-        <Name>sensor4.c</Name>
-        <Path>Source Files/app</Path>
-      </Template>
-      <Template>
-        <Name>drv_adc_static.h</Name>
-        <Path>Header Files/app/system_config/default/framework/driver/adc</Path>
-        <Checksum>DA228C4429B405DC81984D73AB97988D</Checksum>
-      </Template>
-      <Template>
-        <Name>drv_adc_static.c</Name>
-        <Path>Source Files/app/system_config/default/framework/driver/adc/src</Path>
-        <Checksum>6E4F0276AD392C60487405B36BE5C303</Checksum>
+        <Checksum>5C0D911C19B5E425D7F0FB89E579F457</Checksum>
       </Template>
       <Template>
         <Name>drv_usart_static.c</Name>
@@ -202,7 +180,7 @@
       <Template>
         <Name>system_interrupt.c</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>914B763249E6C60815973883564D7EF0</Checksum>
+        <Checksum>63AC8B5759551009C2FC8C622F3B77C2</Checksum>
       </Template>
       <Template>
         <Name>sys_clk_static.c</Name>
@@ -212,7 +190,7 @@
       <Template>
         <Name>system_init.c</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>CE73B318F03F9C4EEE72EFE1D22EBBCF</Checksum>
+        <Checksum>39AD545A5AD7A14416441CDF3DC8244D</Checksum>
       </Template>
       <Template>
         <Name>main.c</Name>
@@ -221,7 +199,7 @@
       <Template>
         <Name>system_definitions.h</Name>
         <Path>Header Files/app/system_config/default</Path>
-        <Checksum>92F4509BF84C25AAFFBFE6B206796265</Checksum>
+        <Checksum>055A1AC425B0CF083F02087CA0AB2405</Checksum>
       </Template>
       <Template>
         <Name>system_exceptions.c</Name>
@@ -248,11 +226,7 @@
       <Template>
         <Name>system_tasks.c</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>3B9574B8219F750F19658DA731E330BA</Checksum>
-      </Template>
-      <Template>
-        <Name>sensor3.h</Name>
-        <Path>Header Files/app</Path>
+        <Checksum>2806B6C3FAA0EB2B1C61C11B85597676</Checksum>
       </Template>
       <Template>
         <Name>system_config.h</Name>
@@ -264,34 +238,26 @@
         <Path>Header Files/app</Path>
       </Template>
       <Template>
-        <Name>sensor4.h</Name>
-        <Path>Header Files/app</Path>
-      </Template>
-      <Template>
         <Name>rtos_hooks.c</Name>
         <Path>Source Files/app/system_config/default</Path>
         <Checksum>FA52743264536E5207D2ADBE57B48D05</Checksum>
       </Template>
-      <Template>
-        <Name>sensor2.h</Name>
-        <Path>Header Files/app</Path>
-      </Template>
     </Templates>
     <CompilerItems>
       <C32-AS>
-        <Include value="../../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX"/>
-        <Include value="../../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include"/>
+        <Include value="../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX"/>
+        <Include value="../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include"/>
         <Include value="../src/system_config/default"/>
       </C32-AS>
       <C32>
-        <Include value="../../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX"/>
-        <Include value="../../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include"/>
+        <Include value="../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX"/>
+        <Include value="../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include"/>
         <Include value="../src/system_config/default"/>
         <Define value="__XC"/>
       </C32>
     </CompilerItems>
     <Libraries>
-      <Library value="../../../../../../../../../microchip/harmony/v1_06_02/bin/framework/peripheral/PIC32MX795F512L_peripherals.a"/>
+      <Library value="../../../../../../../../microchip/harmony/v1_06_02/bin/framework/peripheral/PIC32MX795F512L_peripherals.a"/>
     </Libraries>
   </Manifest>
 </configuration>

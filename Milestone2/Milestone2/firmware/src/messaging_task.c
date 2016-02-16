@@ -96,7 +96,7 @@ MESSAGE_FORMAT msg_Format;
 void sendMsgToWIFLY(unsigned char message[])
 {
     int i;
-    for(i = 0; i < sizeof(message)/sizeof(unsigned char); i++)
+    for(i = 0; i < 10; i++)
     {
         sendByteToWIFLY(message[i]);
     }
@@ -104,8 +104,10 @@ void sendMsgToWIFLY(unsigned char message[])
 
 void sendByteToWIFLY(unsigned char byte)
 {
+    debugChar(send_msg_wifly_byte);
     xQueueSendToBack(msg_taskData.sendMsg_q, &byte, portMAX_DELAY);
     PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
+    debugChar(done_msg_to_sendmsg_q);
 }
 
 void ReceiveUSARTMsgFromMsgQ(unsigned char usartMsg)
@@ -234,7 +236,7 @@ void MESSAGING_TASK_Tasks ( void )
 #endif
                 msg_Format.numInvalid++;
                 //sendMsgToWIFLY("NO\t");
-                sendByteToWIFLY(msg_Format.numInvalid);
+                //sendByteToWIFLY(msg_Format.numInvalid);
                 //sendByteToWIFLY('\n');            
                 msg_Format.validHeader = 0;
                 msg_Format.validFooter = 0;
@@ -323,7 +325,7 @@ void MESSAGING_TASK_Tasks ( void )
                 //sendByteToWIFLY(0xF1);
                 msg_Format.numInvalid++;              
                 //sendMsgToWIFLY("NO\t");
-                sendByteToWIFLY(msg_Format.numInvalid);
+                //sendByteToWIFLY(msg_Format.numInvalid);
                 //sendByteToWIFLY('\n');
                 msg_Format.validHeader = 0;
                 msg_Format.valid = 0;
@@ -362,20 +364,18 @@ void MESSAGING_TASK_Tasks ( void )
             debugChar(msg_Format.data4);
             debugChar(msg_Format.footer);
 #endif
-            sendByteToWIFLY(msg_Format.header);
-            sendByteToWIFLY(msg_Format.dst);
-            sendByteToWIFLY(msg_Format.type);
-            sendByteToWIFLY(msg_Format.msgNum1);
-            sendByteToWIFLY(msg_Format.msgNum2);
-            sendByteToWIFLY(msg_Format.data1);
-            sendByteToWIFLY(msg_Format.data2);
-            sendByteToWIFLY(msg_Format.data3);
-            sendByteToWIFLY(msg_Format.data4);
-            sendByteToWIFLY(msg_Format.footer);
+            debugChar(before_push_data_q);
+            pushDataQ(msg_Format.data1);
+            debugChar(after_push_data_q);
+
+            //unsigned char buffer[10] = {0x81,'S',0x07,0x00,0x00,'F',0x00,0x00,0x00,0x88};
+           // sendMsgToWIFLY(buffer);
+        
             msg_Format.count = 0;
             msg_Format.validHeader = 0;
             msg_Format.validFooter = 0;
             msg_Format.valid = 0;
+            debugChar(reset_msg);
             msg_taskData.state = MESSAGING_TASK_STATE_RUN;
             break;
         }
