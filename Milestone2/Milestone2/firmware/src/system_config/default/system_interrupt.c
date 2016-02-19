@@ -76,11 +76,14 @@ void IntHandlerDrvUsartInstance0(void)
     /* Clear pending interrupt */
     if(!isQueueEmpty())
     {
-        unsigned char data = 0x00;
-        data = messageQ();
-        debugChar(before_usart_transmit);
-        PLIB_USART_TransmitterByteSend(USART_ID_1, data);
-        debugChar(after_usart_transmit);
+        
+        while (!isQueueEmpty() && !PLIB_USART_TransmitterBufferIsFull(USART_ID_1)) {
+            unsigned char data = 0x00;
+            data = messageQ();
+            debugChar(before_usart_transmit);
+            PLIB_USART_TransmitterByteSend(USART_ID_1, data);
+            debugChar(after_usart_transmit);
+        }
     }    
     else//(PLIB_USART_ReceiverDataIsAvailable(USART_ID_1));
     {

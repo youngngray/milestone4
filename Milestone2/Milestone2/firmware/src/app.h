@@ -140,8 +140,6 @@ typedef struct
     unsigned char data4;
     unsigned char footer;
 } MSG_FORMAT;
-unsigned char d;
-int step;
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application Callback Routines

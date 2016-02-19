@@ -59,6 +59,7 @@ extern "C" {
 #define start_app_state_output 0x52
 #define before_usart_transmit 0x53
 #define after_usart_transmit 0x54
+#define FOUND_COUNT_WRONG 0x7e
 #define END_OF_AUSTIN 0x7f
     
 #define START_OF_MITCHELL 0x80

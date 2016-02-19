@@ -95,6 +95,38 @@ MSG_FORMAT msgFormat;
 
 /* TODO:  Add any necessary local functions.
 */
+void forward(void)
+{
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x03 );
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_G,  0x00 );
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_C,  0x0000 );
+}
+
+void reverse(void)
+{
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x03 );
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_G,  0x02 );
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_C,  0x4000 );
+}
+
+void right(void)
+{
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x03 );
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_G,  0x00 );
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_C,  0x4000 );
+}
+
+void left(void)
+{
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x03 );
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_G,  0x02 );
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_C,  0x0000 );    
+}
+
+void stop(void)
+{
+    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x00 );
+}
 
 void pushDataQ(unsigned char dataValue) {
     BaseType_t dataRecv = xQueueSendToBack(appData.data_q, &dataValue, portMAX_DELAY );
@@ -118,7 +150,8 @@ void pushDataQ(unsigned char dataValue) {
 
 void APP_Initialize ( void )
 {
-    step = 0;
+    stop();
+   
     //stopEverything();
     /* Place the App state machine in its initial state. */
     appData.state = APP_STATE_INIT;
@@ -189,36 +222,32 @@ void APP_Tasks ( void )
         {
             break;
         }
-
         /* The running state. Get value from the queue and output character
          * if necessary */
         case APP_STATE_OUTPUT:
         {
             debugChar(start_app_state_output);
-            //Receive Information from the Queue
-#ifdef MACRO_DEBUG
-debugChar(0x03);
-#endif 
-
-#ifdef MACRO_DEBUG
-debugChar(0x04);
-#endif
             unsigned char forw[10] = {0x81,'L',0x07,0x00,0x00,'F',0x00,0x00,0x00,0x88};
-            unsigned char back[10] = {0x81,'L',0x07,0x00,0x00,'B',0x00,0x00,0x00,0x88};
-            unsigned char stop[10] = {0x81,'L',0x07,0x00,0x00,'S',0x00,0x00,0x00,0x88};
-          
+            unsigned char ba[10] = {0x81,'L',0x07,0x00,0x00,'B',0x00,0x00,0x00,0x88};
+            unsigned char st[10] = {0x81,'L',0x07,0x00,0x00,'S',0x00,0x00,0x00,0x88};
+             
+            unsigned char pickup_token[10] = {'1','M', '2', '3', '4', '5', '6', '7', '8', '9'};
+            sendMsgToWIFLY(pickup_token, 10);
             debugChar(data_q_before_recv);
+            unsigned char d;
             BaseType_t recvData = xQueueReceive(appData.data_q , &d, portMAX_DELAY);
             debugChar(data_q_after_recv);
+            /*
             if (recvData == pdFALSE) {
                 stopEverything();
             }
-            
-            debugChar(before_wifly_send);
-            sendMsgToWIFLY(back);
-            debugChar(after_wifly_send);
-            //PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_ADC_1);
-            
+            vTaskDelay(400);
+           
+            if (d == 0xFF) {
+                debugChar(before_wifly_send);
+                sendMsgToWIFLY(pickup_token, 10);
+            }
+            debugChar(after_wifly_send);*/
             break;
         }
         /* The default state should never be executed. */

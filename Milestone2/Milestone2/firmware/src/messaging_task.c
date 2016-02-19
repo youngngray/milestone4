@@ -93,10 +93,22 @@ MESSAGE_FORMAT msg_Format;
 // Section: Application Local Functions
 // *****************************************************************************
 // *****************************************************************************
-void sendMsgToWIFLY(unsigned char message[])
+void sendMsgToWIFLY(unsigned char message[], int num)
 {
+    if (num == 10 && message[0] == 0x81){
+        if (message[2] == 0x07) {
+            msg_Format.token_pickup++;
+            message[3] = msg_Format.token_pickup >> 8;
+            message[4] = (unsigned char) msg_Format.token_pickup;
+        }
+        if (message[2] == 0x12) {
+            msg_Format.debug_count++;
+            message[3] = msg_Format.debug_count >> 8;
+            message[4] = (unsigned char) msg_Format.debug_count;
+        }
+    }
     int i;
-    for(i = 0; i < 10; i++)
+    for(i = 0; i < num; i++)
     {
         sendByteToWIFLY(message[i]);
     }
@@ -105,7 +117,7 @@ void sendMsgToWIFLY(unsigned char message[])
 void sendByteToWIFLY(unsigned char byte)
 {
     debugChar(send_msg_wifly_byte);
-    xQueueSendToBack(msg_taskData.sendMsg_q, &byte, portMAX_DELAY);
+    xQueueSendToFront(msg_taskData.sendMsg_q, &byte, portMAX_DELAY);
     PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
     debugChar(done_msg_to_sendmsg_q);
 }
@@ -117,7 +129,7 @@ void ReceiveUSARTMsgFromMsgQ(unsigned char usartMsg)
 }
 /* TODO:  Add any necessary local functions.
 */
-char isQueueEmpty()
+int isQueueEmpty()
 {
     if(pdFALSE == xQueueIsQueueEmptyFromISR(msg_taskData.sendMsg_q))
     {
@@ -173,6 +185,9 @@ void MESSAGING_TASK_Initialize ( void )
     msg_Format.validHeader = 0;
     msg_Format.validFooter = 0;
     msg_Format.numInvalid = 0;
+    msg_Format.found_count = 0;
+    msg_Format.debug_count = 0;
+    msg_Format.token_pickup = 0;
     //stopEverything();
     /* Initialization is done, allow the state machine to continue */
     msg_taskData.state = MESSAGING_TASK_STATE_RUN;
@@ -312,7 +327,7 @@ void MESSAGING_TASK_Tasks ( void )
 #ifdef MACRO_DEBUG
                 debugChar(0xE0);
 #endif
-//                sendByteToWIFLY(temp);
+
                 msg_Format.footer = temp;
                 msg_Format.validFooter = 5;
                 msg_Format.count = 0;
@@ -322,11 +337,8 @@ void MESSAGING_TASK_Tasks ( void )
 #ifdef MACRO_DEBUG
                 debugChar(0xF1);
 #endif
-                //sendByteToWIFLY(0xF1);
+                
                 msg_Format.numInvalid++;              
-                //sendMsgToWIFLY("NO\t");
-                //sendByteToWIFLY(msg_Format.numInvalid);
-                //sendByteToWIFLY('\n');
                 msg_Format.validHeader = 0;
                 msg_Format.valid = 0;
                 msg_Format.validFooter = 0;
@@ -334,20 +346,17 @@ void MESSAGING_TASK_Tasks ( void )
             }
             if((msg_Format.validHeader == 5) && (msg_Format.validFooter == 5))
             {
-                //sendByteToWIFLY(0xE1);
                 msg_Format.valid = 1;
                 msg_Format.count = 0;
             }
       
           if(msg_Format.valid == 1)
           {
-                //sendByteToWIFLY(0xE1);
-              //debugChar(msg_Format.dst);
+
               msg_Format.count = 0;
               msg_taskData.state = MESSAGING_TASK_STATE_READ;
           }
-            //debugChar(temp);
-            //sendByteToWIFLY(temp);  
+
             break;
         }
         case MESSAGING_TASK_STATE_READ:
@@ -364,13 +373,16 @@ void MESSAGING_TASK_Tasks ( void )
             debugChar(msg_Format.data4);
             debugChar(msg_Format.footer);
 #endif
-            debugChar(before_push_data_q);
-            pushDataQ(msg_Format.data1);
-            debugChar(after_push_data_q);
+            if (msg_Format.type == 0x02) {
+                msg_Format.found_count++;
+                unsigned int num_recv = (msg_Format.msgNum1 << 8) + msg_Format.msgNum2;
+                if (msg_Format.found_count != num_recv) {
+                    debugChar(FOUND_COUNT_WRONG);
+                }
 
-            //unsigned char buffer[10] = {0x81,'S',0x07,0x00,0x00,'F',0x00,0x00,0x00,0x88};
-           // sendMsgToWIFLY(buffer);
-        
+                pushDataQ(0xFF);
+
+            }
             msg_Format.count = 0;
             msg_Format.validHeader = 0;
             msg_Format.validFooter = 0;
@@ -382,7 +394,6 @@ void MESSAGING_TASK_Tasks ( void )
         /* The default state should never be executed. */
         default:
         {
-            /* TODO: Handle error in application's state machine. */
             break;
         }
     }

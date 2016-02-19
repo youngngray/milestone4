@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/debug/Milestone2.X.debug.elf">                 
+  <executable name="dist/default/production/Milestone2.X.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>531968</length>                 
-      <used>17364</used>                     
-      <free>514604</free>                     
+      <used>17032</used>                     
+      <free>514936</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 
       <length>131072</length>                 
-      <used>45200</used>                     
-      <free>85872</free>                     
+      <used>44688</used>                     
+      <free>86384</free>                     
     </memory>                              
   </executable>                            
 </project>                                 

@@ -55,7 +55,7 @@ typedef enum
     MESSAGING_TASK_STATE_READ = 2,
 } MESSAGING_TASK_STATES;
 
-char isQueueEmpty();
+int isQueueEmpty();
 unsigned char messageQ();
 /*******************************************************************************
   Function:
@@ -124,6 +124,9 @@ typedef struct
     unsigned char data4;
     unsigned char footer;
     unsigned char valid;
+    int found_count;
+    int token_pickup;
+    int debug_count;
     int numInvalid;
 } MESSAGE_FORMAT;
 
