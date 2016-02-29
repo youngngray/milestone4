@@ -96,12 +96,12 @@ MESSAGE_FORMAT msg_Format;
 void sendMsgToWIFLY(unsigned char message[], int num)
 {
     if (num == 10 && message[0] == 0x81){
-        if (message[2] == 0x07) {
+        if (message[2] == 0x01) {
             msg_Format.token_pickup++;
             message[3] = msg_Format.token_pickup >> 8;
             message[4] = (unsigned char) msg_Format.token_pickup;
         }
-        if (message[2] == 0x12) {
+        if (message[2] == 0x06) {
             msg_Format.debug_count++;
             message[3] = msg_Format.debug_count >> 8;
             message[4] = (unsigned char) msg_Format.debug_count;
@@ -185,7 +185,7 @@ void MESSAGING_TASK_Initialize ( void )
     msg_Format.validHeader = 0;
     msg_Format.validFooter = 0;
     msg_Format.numInvalid = 0;
-    msg_Format.found_count = 0;
+    msg_Format.command_count = 0;
     msg_Format.debug_count = 0;
     msg_Format.token_pickup = 0;
     //stopEverything();
@@ -373,16 +373,24 @@ void MESSAGING_TASK_Tasks ( void )
             debugChar(msg_Format.data4);
             debugChar(msg_Format.footer);
 #endif
-            if (msg_Format.type == 0x02) {
-                msg_Format.found_count++;
-                unsigned int num_recv = (msg_Format.msgNum1 << 8) + msg_Format.msgNum2;
-                if (msg_Format.found_count != num_recv) {
-                    debugChar(FOUND_COUNT_WRONG);
+            if(msg_Format.type == 0x04)
+            {
+                msg_Format.command_count++;
+                unsigned int num_received = (msg_Format.msgNum1 << 8) + msg_Format.msgNum2;
+                if(msg_Format.command_count != num_received)
+                {
+                    //Handle error message
+                    unsigned char message[10] = {0x81, 'M', 0x06, 0, 0, 'C', 'O', 'F', 'F', 0x88};
+                    sendMsgToWIFLY(message, 10);
+                    //Re-synch with sent message
+                    msg_Format.command_count = num_received;
                 }
-
-                pushDataQ(0xFF);
-
+                else
+                {
+                    pushDataQ(msg_Format.data1);
+                }
             }
+            
             msg_Format.count = 0;
             msg_Format.validHeader = 0;
             msg_Format.validFooter = 0;

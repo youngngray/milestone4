@@ -192,6 +192,8 @@ void SYS_Initialize ( void* data )
     APP_Initialize();
     DEBUGGING_TASK_Initialize();
     MESSAGING_TASK_Initialize();
+    SENSOR_READ_Initialize();
+    SIMULATION_Initialize();
 }
 
 

@@ -147,16 +147,7 @@
       <Template>
         <Name>sys_ports_static.c</Name>
         <Path>Source Files/app/system_config/default/framework/system/ports/src</Path>
-        <Checksum>0DEC74385F73527063EC6EB16B27AA0B</Checksum>
-      </Template>
-      <Template>
-        <Name>system_init.c</Name>
-        <Path>Source Files/app/system_config/default</Path>
-        <Checksum>39AD545A5AD7A14416441CDF3DC8244D</Checksum>
-      </Template>
-      <Template>
-        <Name>main.c</Name>
-        <Path>Source Files/app</Path>
+        <Checksum>69BFE1D9C6301B6577885C0EC5BE39FE</Checksum>
       </Template>
       <Template>
         <Name>system_interrupt_a.S</Name>
@@ -164,14 +155,72 @@
         <Checksum>5C0D911C19B5E425D7F0FB89E579F457</Checksum>
       </Template>
       <Template>
+        <Name>sensor_read.c</Name>
+        <Path>Source Files/app</Path>
+      </Template>
+      <Template>
+        <Name>drv_usart_static.c</Name>
+        <Path>Source Files/app/system_config/default/framework/driver/usart</Path>
+        <Checksum>A6C4A07A40ED00721593B39D1A5584D7</Checksum>
+      </Template>
+      <Template>
+        <Name>debugging_task.h</Name>
+        <Path>Header Files/app</Path>
+      </Template>
+      <Template>
+        <Name>debugging_task.c</Name>
+        <Path>Source Files/app</Path>
+      </Template>
+      <Template>
+        <Name>FreeRTOSConfig.h</Name>
+        <Path>Header Files/app/system_config/default</Path>
+        <Checksum>37B8D3A6608ECBDB533E90D047F71D29</Checksum>
+      </Template>
+      <Template>
+        <Name>simulation.h</Name>
+        <Path>Header Files/app</Path>
+      </Template>
+      <Template>
+        <Name>sys_clk_static.h</Name>
+        <Path>Header Files/app/system_config/default/framework/system/clk</Path>
+        <Checksum>999179DADE9ECD59953526F5E9F83ACC</Checksum>
+      </Template>
+      <Template>
+        <Name>system_interrupt.c</Name>
+        <Path>Source Files/app/system_config/default</Path>
+        <Checksum>9294DCE694AC16D3B6920EFE87380943</Checksum>
+      </Template>
+      <Template>
+        <Name>sys_clk_static.c</Name>
+        <Path>Source Files/app/system_config/default/framework/system/clk/src</Path>
+        <Checksum>1B968DA82B5DD869A6119C3B7628D753</Checksum>
+      </Template>
+      <Template>
+        <Name>sensor_read.h</Name>
+        <Path>Header Files/app</Path>
+      </Template>
+      <Template>
+        <Name>system_init.c</Name>
+        <Path>Source Files/app/system_config/default</Path>
+        <Checksum>DA00C1A6DDA6C5B27BA0294F4FB4917B</Checksum>
+      </Template>
+      <Template>
+        <Name>main.c</Name>
+        <Path>Source Files/app</Path>
+      </Template>
+      <Template>
         <Name>system_definitions.h</Name>
         <Path>Header Files/app/system_config/default</Path>
-        <Checksum>055A1AC425B0CF083F02087CA0AB2405</Checksum>
+        <Checksum>A38A5CE3196EA471FE3A6F110CA6B9B4</Checksum>
       </Template>
       <Template>
         <Name>system_exceptions.c</Name>
         <Path>Source Files/app/system_config/default</Path>
         <Checksum>C111969CA43D6CEA1E9E33A6164E7AE0</Checksum>
+      </Template>
+      <Template>
+        <Name>simulation.c</Name>
+        <Path>Source Files/app</Path>
       </Template>
       <Template>
         <Name>app.c</Name>
@@ -186,78 +235,45 @@
         <Path>Header Files/app</Path>
       </Template>
       <Template>
-        <Name>drv_usart_static.c</Name>
-        <Path>Source Files/app/system_config/default/framework/driver/usart</Path>
-        <Checksum>A6C4A07A40ED00721593B39D1A5584D7</Checksum>
-      </Template>
-      <Template>
-        <Name>debugging_task.h</Name>
-        <Path>Header Files/app</Path>
-      </Template>
-      <Template>
         <Name>drv_usart_static.h</Name>
         <Path>Header Files/app/system_config/default/framework/driver/usart</Path>
         <Checksum>66C127084540B78CD4F78E2FBCC6D29F</Checksum>
       </Template>
       <Template>
-        <Name>debugging_task.c</Name>
-        <Path>Source Files/app</Path>
-      </Template>
-      <Template>
-        <Name>FreeRTOSConfig.h</Name>
-        <Path>Header Files/app/system_config/default</Path>
-        <Checksum>8A13F8C1D1B81346AD5B7407DB74B3DF</Checksum>
-      </Template>
-      <Template>
         <Name>system_tasks.c</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>2806B6C3FAA0EB2B1C61C11B85597676</Checksum>
+        <Checksum>D2445486F1CC882C686DD08CC2B5BDF7</Checksum>
       </Template>
       <Template>
         <Name>system_config.h</Name>
         <Path>Header Files/app/system_config/default</Path>
-        <Checksum>8B9BAFD8BB6FC8CC3187ADE25532D3D0</Checksum>
+        <Checksum>8B105054EFD26B4B53343120B36B8A4C</Checksum>
       </Template>
       <Template>
         <Name>app.h</Name>
         <Path>Header Files/app</Path>
       </Template>
       <Template>
-        <Name>sys_clk_static.h</Name>
-        <Path>Header Files/app/system_config/default/framework/system/clk</Path>
-        <Checksum>999179DADE9ECD59953526F5E9F83ACC</Checksum>
-      </Template>
-      <Template>
-        <Name>system_interrupt.c</Name>
-        <Path>Source Files/app/system_config/default</Path>
-        <Checksum>63AC8B5759551009C2FC8C622F3B77C2</Checksum>
-      </Template>
-      <Template>
         <Name>rtos_hooks.c</Name>
         <Path>Source Files/app/system_config/default</Path>
         <Checksum>FA52743264536E5207D2ADBE57B48D05</Checksum>
       </Template>
-      <Template>
-        <Name>sys_clk_static.c</Name>
-        <Path>Source Files/app/system_config/default/framework/system/clk/src</Path>
-        <Checksum>1B968DA82B5DD869A6119C3B7628D753</Checksum>
-      </Template>
     </Templates>
     <CompilerItems>
       <C32-AS>
-        <Include value="../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX"/>
-        <Include value="../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include"/>
+        <Include value="../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX"/>
+        <Include value="../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include"/>
         <Include value="../src/system_config/default"/>
       </C32-AS>
       <C32>
-        <Include value="../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX"/>
-        <Include value="../../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include"/>
+        <Include value="../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/portable/MPLAB/PIC32MX"/>
+        <Include value="../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include"/>
         <Include value="../src/system_config/default"/>
         <Define value="__XC"/>
       </C32>
     </CompilerItems>
     <Libraries>
-      <Library value="../../../../../../../../microchip/harmony/v1_06_02/bin/framework/peripheral/PIC32MX795F512L_peripherals.a"/>
+      <Library value="../../../../../../../microchip/harmony/v1_06_02/bin/framework/peripheral/PIC32MX795F512L_peripherals.a"/>
     </Libraries>
   </Manifest>
 </configuration>

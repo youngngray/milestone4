@@ -124,7 +124,7 @@ typedef struct
     unsigned char data4;
     unsigned char footer;
     unsigned char valid;
-    int found_count;
+    int command_count;
     int token_pickup;
     int debug_count;
     int numInvalid;

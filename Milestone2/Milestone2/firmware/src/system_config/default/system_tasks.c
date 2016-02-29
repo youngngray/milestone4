@@ -57,6 +57,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "app.h"
 #include "debugging_task.h"
 #include "messaging_task.h"
+#include "sensor_read.h"
+#include "simulation.h"
 
 
 // *****************************************************************************
@@ -69,6 +71,8 @@ static void _SYS_Tasks ( void );
 static void _APP_Tasks(void);
 static void _DEBUGGING_TASK_Tasks(void);
 static void _MESSAGING_TASK_Tasks(void);
+static void _SENSOR_READ_Tasks(void);
+static void _SIMULATION_Tasks(void);
 
 
 // *****************************************************************************
@@ -105,6 +109,16 @@ void SYS_Tasks ( void )
     /* Create OS Thread for MESSAGING_TASK Tasks. */
     xTaskCreate((TaskFunction_t) _MESSAGING_TASK_Tasks,
                 "MESSAGING_TASK Tasks",
+                1024, NULL, 1, NULL);
+
+    /* Create OS Thread for SENSOR_READ Tasks. */
+    xTaskCreate((TaskFunction_t) _SENSOR_READ_Tasks,
+                "SENSOR_READ Tasks",
+                1024, NULL, 1, NULL);
+
+    /* Create OS Thread for SIMULATION Tasks. */
+    xTaskCreate((TaskFunction_t) _SIMULATION_Tasks,
+                "SIMULATION Tasks",
                 1024, NULL, 1, NULL);
 
     /**************
@@ -185,6 +199,40 @@ static void _MESSAGING_TASK_Tasks(void)
     while(1)
     {
         MESSAGING_TASK_Tasks();
+    }
+}
+
+
+/*******************************************************************************
+  Function:
+    void _SENSOR_READ_Tasks ( void )
+
+  Summary:
+    Maintains state machine of SENSOR_READ.
+*/
+
+static void _SENSOR_READ_Tasks(void)
+{
+    while(1)
+    {
+        SENSOR_READ_Tasks();
+    }
+}
+
+
+/*******************************************************************************
+  Function:
+    void _SIMULATION_Tasks ( void )
+
+  Summary:
+    Maintains state machine of SIMULATION.
+*/
+
+static void _SIMULATION_Tasks(void)
+{
+    while(1)
+    {
+        SIMULATION_Tasks();
     }
 }
 

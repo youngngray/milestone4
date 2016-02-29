@@ -95,37 +95,51 @@ MSG_FORMAT msgFormat;
 
 /* TODO:  Add any necessary local functions.
 */
+#define ALLOW_MOVEMENT
 void forward(void)
 {
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x03 );
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_G,  0x00 );
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_C,  0x0000 );
+#ifdef ALLOW_MOVEMENT
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_1, 0);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_C, PORTS_BIT_POS_14, 0);
+#endif
 }
 
 void reverse(void)
 {
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x03 );
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_G,  0x02 );
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_C,  0x4000 );
+    #ifdef ALLOW_MOVEMENT
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_1, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_C, PORTS_BIT_POS_14, 1);
+#endif
 }
 
 void right(void)
 {
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x03 );
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_G,  0x00 );
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_C,  0x4000 );
+    #ifdef ALLOW_MOVEMENT
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_1, 0);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_C, PORTS_BIT_POS_14, 1);
+#endif
 }
 
 void left(void)
 {
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x03 );
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_G,  0x02 );
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_C,  0x0000 );    
+    #ifdef ALLOW_MOVEMENT
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_1, 1);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_C, PORTS_BIT_POS_14, 0);  
+#endif
 }
 
 void stop(void)
 {
-    PLIB_PORTS_Write( PORTS_ID_0, PORT_CHANNEL_D,  0x00 );
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 0);
+    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 0);
 }
 
 void pushDataQ(unsigned char dataValue) {
@@ -170,28 +184,8 @@ void APP_Initialize ( void )
     if (appData.data_q == 0) {
         stopEverything();
     }
-    //stopEverything()
-    //Create the timer
-    appData.local_timer = xTimerCreate( "50msTimer",
-                50 / portTICK_PERIOD_MS,
-                pdTRUE,
-                0,
-                vTimerCallback );
-    
-    //Ensure timer was created. If not, do not continue and turn on LED
-    if(appData.local_timer == 0)
-    {
-        stopEverything();
-    }
-    BaseType_t started = xTimerStart(appData.local_timer, 0);
-    
-    //Ensure the timer started successfully. If not, do not continue and turn
-    // on LED
-    if(started == pdFAIL)
-    {
-        stopEverything();
-    }   
-    
+    //stopEverything() 
+    appData.num_commands = 0;
     //Setup AD Driver
    /* SYS_INT_SourceEnable(INT_SOURCE_ADC_1);
     DRV_ADC_Initialize();
@@ -212,6 +206,7 @@ void APP_Initialize ( void )
   Remarks:
     See prototype in app.h.
  */
+int first = 1;
 void APP_Tasks ( void )
 {
    /* Check the application's current state. */
@@ -231,23 +226,70 @@ void APP_Tasks ( void )
             unsigned char ba[10] = {0x81,'L',0x07,0x00,0x00,'B',0x00,0x00,0x00,0x88};
             unsigned char st[10] = {0x81,'L',0x07,0x00,0x00,'S',0x00,0x00,0x00,0x88};
              
-            unsigned char pickup_token[10] = {'1','M', '2', '3', '4', '5', '6', '7', '8', '9'};
-            sendMsgToWIFLY(pickup_token, 10);
-            debugChar(data_q_before_recv);
-            unsigned char d;
-            BaseType_t recvData = xQueueReceive(appData.data_q , &d, portMAX_DELAY);
-            debugChar(data_q_after_recv);
-            /*
-            if (recvData == pdFALSE) {
+            //unsigned char pickup_token[10] = {'1','M', '2', '3', '4', '5', '6', '7', '8', '9'};
+            //sendMsgToWIFLY(pickup_token, 10);
+            unsigned char message[10] = {0x81, 'L', 0x04, 0, 1, 'F', 'N', 'D', 'T', 0x88};
+            //sendMsgToWIFLY(message, 10);
+            //sendMsgToWIFLY(pickup_token, 10);
+            if(first)
+            {
+                first = 0;
+                sendMsgToWIFLY(message, 10);
+            }
+            unsigned char command;
+            BaseType_t received = xQueueReceive(appData.data_q,
+                    &command, portMAX_DELAY);
+            //If not received, stop and turn on LED.
+            if(received == pdFALSE)
+            {
                 stopEverything();
             }
-            vTaskDelay(400);
-           
-            if (d == 0xFF) {
-                debugChar(before_wifly_send);
-                sendMsgToWIFLY(pickup_token, 10);
+            
+#ifdef ALLOW_MOVEMENT
+            switch(command)
+            {
+                case 'F':
+                {
+                    appData.num_commands++;
+                    forward();
+                    debugChar('F');
+                    break;
+                }
+                case 'S':
+                {
+                    stop();
+                    debugChar('S');
+                    break;
+                }
+                case 'L':
+                {
+                    left();
+                    debugChar('L');
+                    break;
+                }
+                case 'B':
+                {
+                    reverse();
+                    debugChar('B');
+                    break;
+                }
+                case 'R':
+                {
+                    right();
+                    debugChar('R');
+                    break;
+                }
+                default:
+                {
+                    break;
+                }
             }
-            debugChar(after_wifly_send);*/
+#endif
+            if(appData.num_commands == 4)
+            {
+                sendMsgToWIFLY(message, 10);
+                appData.num_commands = 0;
+            }
             break;
         }
         /* The default state should never be executed. */

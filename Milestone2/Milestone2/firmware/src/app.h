@@ -125,6 +125,7 @@ typedef struct
     
     //The character to output
     unsigned char blink;
+    unsigned int num_commands;
 } APP_DATA;
 
 typedef struct
@@ -139,6 +140,7 @@ typedef struct
     unsigned char data3;
     unsigned char data4;
     unsigned char footer;
+    
 } MSG_FORMAT;
 // *****************************************************************************
 // *****************************************************************************

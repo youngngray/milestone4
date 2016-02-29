@@ -67,6 +67,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "app.h"
 #include "debugging_task.h"
 #include "messaging_task.h"
+#include "sensor_read.h"
+#include "simulation.h"
 
 
 // DOM-IGNORE-BEGIN

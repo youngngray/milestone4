@@ -95,15 +95,19 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #define SYS_PORT_CNPUE          0x0
 #define SYS_PORT_CNEN           0x0
 
-#define SYS_PORT_A_TRIS         0xc6f7
+#define SYS_PORT_A_TRIS         0xc2f7
 #define SYS_PORT_A_LAT          0x0
 #define SYS_PORT_A_ODC          0x0
+
+#define SYS_PORT_B_TRIS         0xc7ff
+#define SYS_PORT_B_LAT          0x0
+#define SYS_PORT_B_ODC          0x0
 
 #define SYS_PORT_C_TRIS         0xb01e
 #define SYS_PORT_C_LAT          0x0
 #define SYS_PORT_C_ODC          0x0
 
-#define SYS_PORT_D_TRIS         0xfffc
+#define SYS_PORT_D_TRIS         0xfeb4
 #define SYS_PORT_D_LAT          0x0
 #define SYS_PORT_D_ODC          0x0
 
@@ -111,7 +115,11 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #define SYS_PORT_E_LAT          0x0
 #define SYS_PORT_E_ODC          0x0
 
-#define SYS_PORT_G_TRIS         0x83cd
+#define SYS_PORT_F_TRIS         0x313c
+#define SYS_PORT_F_LAT          0x0
+#define SYS_PORT_F_ODC          0x0
+
+#define SYS_PORT_G_TRIS         0x82cd
 #define SYS_PORT_G_LAT          0x0
 #define SYS_PORT_G_ODC          0x0
 
