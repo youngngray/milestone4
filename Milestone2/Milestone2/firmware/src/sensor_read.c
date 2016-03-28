@@ -119,6 +119,8 @@ void SENSOR_READ_Initialize ( void )
     /* TODO: Initialize your application's state machine and other
      * parameters.
      */
+    sensor_readData.token_found = 0;
+    
     sensor_readData.state = SENSOR_READ_STATE_CAPTURE;
 }
 
@@ -173,10 +175,14 @@ void SENSOR_READ_Tasks ( void )
             PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_A, 0x0400);
             PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_F, 0x0003);
             PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_D, 0x0140);
+            
             //5. Measure voltage to go low.
+            
+            /* TWEAK THIS VALUE TO CHANGE SENSITIVITY OF SENSOR */
             /*I am simply waiting 15ms then measuring. If the value is low, we
              are on white, if the value is high, then we are on black.*/
-            vTaskDelay(30);
+            vTaskDelay(25);
+            
             unsigned int read[5] = {0};
             read[0] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_B);
             read[1] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_G);
@@ -203,10 +209,17 @@ void SENSOR_READ_Tasks ( void )
                 count++;
             if(count >= 2)
             {
-                stop();
+                if(!sensor_readData.token_found)
+                {
+                    //stop();
+                    unsigned char message[10] = {0x81, 'C', 0x01, 0, 0, 0, 0, 0, 0, 0x88};
+                    sendMsgToWIFLY(message, 10);
+                    sensor_readData.token_found = 1;
+                }
             }
             else
             {
+                sensor_readData.token_found = 0;
                 //forward();
             }
             //6. Turn off sensor

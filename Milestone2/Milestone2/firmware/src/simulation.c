@@ -119,6 +119,7 @@ void SIMULATION_Initialize ( void )
     /* TODO: Initialize your application's state machine and other
      * parameters.
      */
+    simulationData.state = SIMULATION_STATE_BEGIN;
 }
 
 
@@ -138,6 +139,37 @@ void SIMULATION_Tasks ( void )
         /* Application's initial state. */
         case SIMULATION_STATE_INIT:
         {
+            break;
+        }
+        case SIMULATION_STATE_BEGIN:
+        {
+            unsigned char message[10] = {0x81, 'L', 0x04, 0, 1, 'F', 0, 0, 0, 0x88};
+            sendMsgToWIFLY(message, 10);
+            simulationData.state = SIMULATION_STATE_SECOND;
+            break;
+        }
+        case SIMULATION_STATE_SECOND:
+        {
+            vTaskDelay(8000);
+            unsigned char message[10] = {0x81, 'L', 0x04, 0, 2, 'R', 0, 0, 0, 0x88};
+            sendMsgToWIFLY(message, 10);
+            simulationData.state = SIMULATION_STATE_THIRD;
+            break;
+        }
+        case SIMULATION_STATE_THIRD:
+        {
+            vTaskDelay(8000);
+            unsigned char message[10] = {0x81, 'L', 0x04, 0, 3, 'L', 0, 0, 0, 0x88};
+            sendMsgToWIFLY(message, 10);
+            simulationData.state = SIMULATION_STATE_FOURTH;
+            break;
+        }
+        case SIMULATION_STATE_FOURTH:
+        {
+            vTaskDelay(8000);
+            unsigned char message[10] = {0x81, 'L', 0x04, 0, 4, 'B', 0, 0, 0, 0x88};
+            sendMsgToWIFLY(message, 10);
+            simulationData.state = SIMULATION_STATE_INIT;
             break;
         }
 

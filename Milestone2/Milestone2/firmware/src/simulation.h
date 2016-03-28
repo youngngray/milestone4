@@ -90,6 +90,10 @@ typedef enum
 	SIMULATION_STATE_INIT=0,
 
 	/* TODO: Define states used by the application state machine. */
+            SIMULATION_STATE_BEGIN=1,
+            SIMULATION_STATE_SECOND=2,
+            SIMULATION_STATE_THIRD=3,
+            SIMULATION_STATE_FOURTH=4,
 
 } SIMULATION_STATES;
 

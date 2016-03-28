@@ -117,14 +117,9 @@ typedef struct
     APP_STATES state;
     
     //Handle to the local queue
-    QueueHandle_t local_q;
-    QueueHandle_t sensor1_q;
     QueueHandle_t data_q;
-    //Handle to the local timer used
-    TimerHandle_t local_timer;
     
     //The character to output
-    unsigned char blink;
     unsigned int num_commands;
 } APP_DATA;
 

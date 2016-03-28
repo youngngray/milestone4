@@ -99,8 +99,8 @@ MSG_FORMAT msgFormat;
 void forward(void)
 {
 #ifdef ALLOW_MOVEMENT
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 1);
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 1);
+    DRV_OC1_Start();
+    DRV_OC0_Start();
     PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_1, 0);
     PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_C, PORTS_BIT_POS_14, 0);
 #endif
@@ -109,8 +109,8 @@ void forward(void)
 void reverse(void)
 {
     #ifdef ALLOW_MOVEMENT
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 1);
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 1);
+    DRV_OC1_Start();
+    DRV_OC0_Start();
     PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_1, 1);
     PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_C, PORTS_BIT_POS_14, 1);
 #endif
@@ -119,8 +119,8 @@ void reverse(void)
 void right(void)
 {
     #ifdef ALLOW_MOVEMENT
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 1);
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 1);
+    DRV_OC1_Start();
+    DRV_OC0_Start();
     PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_1, 0);
     PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_C, PORTS_BIT_POS_14, 1);
 #endif
@@ -129,8 +129,8 @@ void right(void)
 void left(void)
 {
     #ifdef ALLOW_MOVEMENT
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 1);
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 1);
+    DRV_OC1_Start();
+    DRV_OC0_Start();
     PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_1, 1);
     PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_C, PORTS_BIT_POS_14, 0);  
 #endif
@@ -138,8 +138,18 @@ void left(void)
 
 void stop(void)
 {
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_0, 0);
-    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_1, 0);
+    DRV_OC1_Stop();
+    DRV_OC0_Stop();
+}
+
+void stopleft(void)
+{
+    DRV_OC1_Stop();
+}
+
+void stopright(void)
+{
+    DRV_OC0_Stop();
 }
 
 void pushDataQ(unsigned char dataValue) {
@@ -164,7 +174,7 @@ void pushDataQ(unsigned char dataValue) {
 
 void APP_Initialize ( void )
 {
-    stop();
+    //stop();
    
     //stopEverything();
     /* Place the App state machine in its initial state. */
@@ -172,13 +182,14 @@ void APP_Initialize ( void )
     /* TODO: Initialize your application's state machine and other
      * parameters.
      */
-    //Create the queue
-    appData.local_q = xQueueCreate(10, sizeof(unsigned int));
-    //Ensure queue was created. If not, do not continue and turn on LED
-    if(appData.local_q == 0)
-    {
-        stopEverything();
-    }
+    DRV_TMR0_Initialize();
+    DRV_TMR0_Start();
+    DRV_TMR1_Initialize();
+    DRV_TMR1_Start();
+    DRV_TMR2_Initialize();
+    DRV_TMR2_Start();
+    DRV_OC0_Initialize();
+    DRV_OC1_Initialize();
    
     appData.data_q = xQueueCreate(100, sizeof(unsigned char));
     if (appData.data_q == 0) {
@@ -186,16 +197,10 @@ void APP_Initialize ( void )
     }
     //stopEverything() 
     appData.num_commands = 0;
-    //Setup AD Driver
-   /* SYS_INT_SourceEnable(INT_SOURCE_ADC_1);
-    DRV_ADC_Initialize();
-    DRV_ADC_Open();
-    DRV_ADC_ChannelScanInputsAdd(ADC_INPUT_SCAN_AN0 | ADC_INPUT_SCAN_AN1|ADC_INPUT_SCAN_AN2);
-    PLIB_ADC_MuxAInputScanEnable(ADC_ID_1);
-    DRV_ADC_Start();
-    */
+    
     /* Initialization is done, allow the state machine to continue */
     appData.state = APP_STATE_OUTPUT;
+    //right();
 }
 
 
@@ -206,7 +211,6 @@ void APP_Initialize ( void )
   Remarks:
     See prototype in app.h.
  */
-int first = 1;
 void APP_Tasks ( void )
 {
    /* Check the application's current state. */
@@ -231,11 +235,7 @@ void APP_Tasks ( void )
             unsigned char message[10] = {0x81, 'L', 0x04, 0, 1, 'F', 'N', 'D', 'T', 0x88};
             //sendMsgToWIFLY(message, 10);
             //sendMsgToWIFLY(pickup_token, 10);
-            if(first)
-            {
-                first = 0;
-                sendMsgToWIFLY(message, 10);
-            }
+
             unsigned char command;
             BaseType_t received = xQueueReceive(appData.data_q,
                     &command, portMAX_DELAY);
@@ -250,7 +250,6 @@ void APP_Tasks ( void )
             {
                 case 'F':
                 {
-                    appData.num_commands++;
                     forward();
                     debugChar('F');
                     break;
@@ -285,11 +284,6 @@ void APP_Tasks ( void )
                 }
             }
 #endif
-            if(appData.num_commands == 4)
-            {
-                sendMsgToWIFLY(message, 10);
-                appData.num_commands = 0;
-            }
             break;
         }
         /* The default state should never be executed. */

@@ -112,6 +112,9 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 // *****************************************************************************
 
+//<editor-fold defaultstate="collapsed" desc="DRV_Timer Initialization Data">
+
+// </editor-fold>
 //<editor-fold defaultstate="collapsed" desc="DRV_USART Initialization Data">
 
 // </editor-fold>
@@ -181,7 +184,21 @@ void SYS_Initialize ( void* data )
     SYS_PORTS_Initialize();
 
     /* Initialize Drivers */
-    DRV_USART0_Initialize();
+    /*Initialize TMR0 */
+    DRV_TMR0_Initialize();
+    /*Initialize TMR1 */
+    DRV_TMR1_Initialize();
+    /*Initialize TMR2 */
+    DRV_TMR2_Initialize();
+ 
+     DRV_USART0_Initialize();
+
+
+    /*Initialize OC0 */
+    DRV_OC0_Initialize();
+
+    /*Initialize OC1 */
+    DRV_OC1_Initialize();
 
     /* Initialize System Services */
     SYS_INT_Initialize();  
@@ -194,6 +211,7 @@ void SYS_Initialize ( void* data )
     MESSAGING_TASK_Initialize();
     SENSOR_READ_Initialize();
     SIMULATION_Initialize();
+    MOTOR_CONTROL_Initialize();
 }
 
 

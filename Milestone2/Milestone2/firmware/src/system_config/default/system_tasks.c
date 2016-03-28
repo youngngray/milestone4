@@ -59,6 +59,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "messaging_task.h"
 #include "sensor_read.h"
 #include "simulation.h"
+#include "motor_control.h"
 
 
 // *****************************************************************************
@@ -73,6 +74,7 @@ static void _DEBUGGING_TASK_Tasks(void);
 static void _MESSAGING_TASK_Tasks(void);
 static void _SENSOR_READ_Tasks(void);
 static void _SIMULATION_Tasks(void);
+static void _MOTOR_CONTROL_Tasks(void);
 
 
 // *****************************************************************************
@@ -119,6 +121,11 @@ void SYS_Tasks ( void )
     /* Create OS Thread for SIMULATION Tasks. */
     xTaskCreate((TaskFunction_t) _SIMULATION_Tasks,
                 "SIMULATION Tasks",
+                1024, NULL, 1, NULL);
+
+    /* Create OS Thread for MOTOR_CONTROL Tasks. */
+    xTaskCreate((TaskFunction_t) _MOTOR_CONTROL_Tasks,
+                "MOTOR_CONTROL Tasks",
                 1024, NULL, 1, NULL);
 
     /**************
@@ -233,6 +240,23 @@ static void _SIMULATION_Tasks(void)
     while(1)
     {
         SIMULATION_Tasks();
+    }
+}
+
+
+/*******************************************************************************
+  Function:
+    void _MOTOR_CONTROL_Tasks ( void )
+
+  Summary:
+    Maintains state machine of MOTOR_CONTROL.
+*/
+
+static void _MOTOR_CONTROL_Tasks(void)
+{
+    while(1)
+    {
+        MOTOR_CONTROL_Tasks();
     }
 }
 

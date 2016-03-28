@@ -71,6 +71,10 @@
         <Path>Header Files/FreeRTOS</Path>
       </File>
       <File>
+        <Name>driver.h</Name>
+        <Path>Header Files/framework/driver</Path>
+      </File>
+      <File>
         <Name>sys_common.h</Name>
         <Path>Header Files/framework/system/common</Path>
       </File>
@@ -152,7 +156,16 @@
       <Template>
         <Name>system_interrupt_a.S</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>5C0D911C19B5E425D7F0FB89E579F457</Checksum>
+        <Checksum>47EE3FB5D861418E3C36338DD9F6EBF6</Checksum>
+      </Template>
+      <Template>
+        <Name>drv_tmr_static.h</Name>
+        <Path>Header Files/app/system_config/default/framework/driver/tmr</Path>
+        <Checksum>B9BBCD3BAFE7DE3D1D35D12D13379E76</Checksum>
+      </Template>
+      <Template>
+        <Name>motor_control.h</Name>
+        <Path>Header Files/app</Path>
       </Template>
       <Template>
         <Name>sensor_read.c</Name>
@@ -188,7 +201,7 @@
       <Template>
         <Name>system_interrupt.c</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>9294DCE694AC16D3B6920EFE87380943</Checksum>
+        <Checksum>07DE30BAA298C0DD26D212B8319246A5</Checksum>
       </Template>
       <Template>
         <Name>sys_clk_static.c</Name>
@@ -200,9 +213,19 @@
         <Path>Header Files/app</Path>
       </Template>
       <Template>
+        <Name>drv_oc_static.c</Name>
+        <Path>Source Files/app/system_config/default/framework/driver/oc/src</Path>
+        <Checksum>9FF7B47C8319817A156482107CB752B4</Checksum>
+      </Template>
+      <Template>
         <Name>system_init.c</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>DA00C1A6DDA6C5B27BA0294F4FB4917B</Checksum>
+        <Checksum>3D9A1B06A51476E39647FAA5E97C878D</Checksum>
+      </Template>
+      <Template>
+        <Name>drv_oc_static.h</Name>
+        <Path>Header Files/app/system_config/default/framework/driver/oc</Path>
+        <Checksum>30853D3035027DABD2A7C0A53DD06E62</Checksum>
       </Template>
       <Template>
         <Name>main.c</Name>
@@ -211,7 +234,7 @@
       <Template>
         <Name>system_definitions.h</Name>
         <Path>Header Files/app/system_config/default</Path>
-        <Checksum>A38A5CE3196EA471FE3A6F110CA6B9B4</Checksum>
+        <Checksum>4DD2C34C4A1440AE413878D08EBB020B</Checksum>
       </Template>
       <Template>
         <Name>system_exceptions.c</Name>
@@ -242,16 +265,25 @@
       <Template>
         <Name>system_tasks.c</Name>
         <Path>Source Files/app/system_config/default</Path>
-        <Checksum>D2445486F1CC882C686DD08CC2B5BDF7</Checksum>
+        <Checksum>A6824DE31BEE0B34F4C6AFE9C22182FD</Checksum>
+      </Template>
+      <Template>
+        <Name>motor_control.c</Name>
+        <Path>Source Files/app</Path>
       </Template>
       <Template>
         <Name>system_config.h</Name>
         <Path>Header Files/app/system_config/default</Path>
-        <Checksum>8B105054EFD26B4B53343120B36B8A4C</Checksum>
+        <Checksum>5DD11D4C9B30C18D9E9B9FEF4074E115</Checksum>
       </Template>
       <Template>
         <Name>app.h</Name>
         <Path>Header Files/app</Path>
+      </Template>
+      <Template>
+        <Name>drv_tmr_static.c</Name>
+        <Path>Source Files/app/system_config/default/framework/driver/tmr/src</Path>
+        <Checksum>A1CA7F365806EB473EE7F2F77A10E3A0</Checksum>
       </Template>
       <Template>
         <Name>rtos_hooks.c</Name>

@@ -100,6 +100,11 @@ void sendMsgToWIFLY(unsigned char message[], int num)
             msg_Format.token_pickup++;
             message[3] = msg_Format.token_pickup >> 8;
             message[4] = (unsigned char) msg_Format.token_pickup;
+            if(msg_Format.token_pickup == 4)
+            {
+                //DRV_OC1_Stop();
+                //DRV_OC0_Stop();
+            }
         }
         if (message[2] == 0x06) {
             msg_Format.debug_count++;

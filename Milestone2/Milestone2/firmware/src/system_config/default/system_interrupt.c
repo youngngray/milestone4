@@ -63,12 +63,46 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include <xc.h>
 #include <sys/attribs.h>
 #include "app.h"
+#include "app_public.h"
 #include "debugging_task.h"
 #include "messaging_task.h"
 #include "system_definitions.h"
 
+//Local variables
+unsigned int lwheelint = 0;
+unsigned int rwheelint = 0;
 
+//The interrupt for the timer counter storing left wheel encoder data
+void IntHandlerDrvTmrInstance0(void)
+{
+    lwheelint += 1;
+    pushEncoderFromISR((0xF000 | lwheelint));
+    if(lwheelint >= 200)
+    {
+        lwheelint = 0;
+        rwheelint = 0;
+    }
+    PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_3);
+}
 
+//The interrupt for the timer counter storing right wheel encoder data
+IntHandlerDrvTmrInstance1(void)
+{
+    rwheelint += 1;
+    pushEncoderFromISR((0x0F00 | rwheelint));
+    if(rwheelint >= 200)
+    {
+        lwheelint = 0;
+        rwheelint = 0;
+    }
+    //DRV_OC0_Stop();
+    PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_4);
+}
+
+IntHandlerDrvTmrInstance2(void)
+{
+    PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_2);
+}
 
 void IntHandlerDrvUsartInstance0(void)
 {

@@ -114,7 +114,7 @@ typedef struct
     SENSOR_READ_STATES state;
 
     /* TODO: Define any additional data used by the application. */
-
+    unsigned char token_found;
 
 } SENSOR_READ_DATA;
 
