@@ -241,12 +241,15 @@ void SENSOR_READ_Tasks ( void )
                         PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_3, 1);
                         sensor_readData.tokens += 1;
                         sensor_readData.token_found = 1;
+                        /*This was used in Milestone 4 to stop after the third 
+                         * token was found. Removed for Final Demo.
                         if(sensor_readData.tokens == 3)
                         {
                             vTaskDelay(25);
                             unsigned char message[10] = {0x81, 'L', 0x20, 0, 1, 0, 0, 0, 0, 0x88};
                             sendMsgToWIFLY(message, 10);
                         }
+                         * */
                     }
                 }
             }
