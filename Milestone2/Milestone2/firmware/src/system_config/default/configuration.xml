@@ -274,7 +274,7 @@
       <Template>
         <Name>system_config.h</Name>
         <Path>Header Files/app/system_config/default</Path>
-        <Checksum>5DD11D4C9B30C18D9E9B9FEF4074E115</Checksum>
+        <Checksum>1506BC82530F8205EF75A06AC6B7EBF9</Checksum>
       </Template>
       <Template>
         <Name>app.h</Name>

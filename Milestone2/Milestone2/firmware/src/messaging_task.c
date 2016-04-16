@@ -100,16 +100,21 @@ void sendMsgToWIFLY(unsigned char message[], int num)
             msg_Format.token_pickup++;
             message[3] = msg_Format.token_pickup >> 8;
             message[4] = (unsigned char) msg_Format.token_pickup;
-            if(msg_Format.token_pickup == 4)
-            {
-                //DRV_OC1_Stop();
-                //DRV_OC0_Stop();
-            }
         }
         if (message[2] == 0x06) {
             msg_Format.debug_count++;
             message[3] = msg_Format.debug_count >> 8;
             message[4] = (unsigned char) msg_Format.debug_count;
+        }
+        if(message[2] == 0x25) {
+            msg_Format.half_count++;
+            message[3] = msg_Format.half_count >> 8;
+            message[4] = (unsigned char) msg_Format.half_count;
+        }
+        if(message[2] == 0x26) {
+            msg_Format.done_count++;
+            message[3] = msg_Format.done_count >> 8;
+            message[4] = (unsigned char) msg_Format.done_count;
         }
     }
     int i;
@@ -117,20 +122,31 @@ void sendMsgToWIFLY(unsigned char message[], int num)
     {
         sendByteToWIFLY(message[i]);
     }
+    //PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
 }
 
 void sendByteToWIFLY(unsigned char byte)
 {
     debugChar(send_msg_wifly_byte);
-    xQueueSendToFront(msg_taskData.sendMsg_q, &byte, portMAX_DELAY);
-    PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
+    BaseType_t err = xQueueSendToFront(msg_taskData.sendMsg_q, &byte, portMAX_DELAY);
+    if(err != pdTRUE)
+    {
+        stopEverything();
+    }
     debugChar(done_msg_to_sendmsg_q);
+    PLIB_INT_SourceEnable(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
 }
 
-void ReceiveUSARTMsgFromMsgQ(unsigned char usartMsg)
+BaseType_t ReceiveUSARTMsgFromMsgQ(unsigned char usartMsg)
 {
-    xQueueSendToBackFromISR(msg_taskData.receiveMsg_q, &usartMsg, NULL);
+    BaseType_t taskWoken = pdFALSE;
+    BaseType_t err = xQueueSendToBackFromISR(msg_taskData.receiveMsg_q, &usartMsg, &taskWoken);
+    if(err != pdPASS)
+    {
+        stopEverything();
+    }
     //stopEverything();
+    return taskWoken;
 }
 /* TODO:  Add any necessary local functions.
 */
@@ -146,11 +162,15 @@ int isQueueEmpty()
     }
 }
 
-unsigned char messageQ()
+unsigned char messageQ(BaseType_t *taskWoken)
 {
     unsigned char data = 0x0;
     BaseType_t errors;
-    errors = xQueueReceiveFromISR(msg_taskData.sendMsg_q, &data, NULL);
+    errors = xQueueReceiveFromISR(msg_taskData.sendMsg_q, &data, taskWoken);
+    if(errors != pdTRUE)
+    {
+        stopEverything();
+    }
     return data;
 }
 
@@ -191,8 +211,14 @@ void MESSAGING_TASK_Initialize ( void )
     msg_Format.validFooter = 0;
     msg_Format.numInvalid = 0;
     msg_Format.command_count = 0;
+    msg_Format._20_count = 0;
+    msg_Format._21_count = 0;
+    msg_Format._22_count = 0;
+    msg_Format._23_count = 0;
+    msg_Format._24_count = 0;
     msg_Format.debug_count = 0;
     msg_Format.token_pickup = 0;
+    msg_Format.half_count = 0;
     //stopEverything();
     /* Initialization is done, allow the state machine to continue */
     msg_taskData.state = MESSAGING_TASK_STATE_RUN;
@@ -378,6 +404,7 @@ void MESSAGING_TASK_Tasks ( void )
             debugChar(msg_Format.data4);
             debugChar(msg_Format.footer);
 #endif
+            //Old type system... Ignore, not used
             if(msg_Format.type == 0x04)
             {
                 msg_Format.command_count++;
@@ -393,6 +420,106 @@ void MESSAGING_TASK_Tasks ( void )
                 else
                 {
                     pushDataQ(msg_Format.data1);
+                }
+            }
+            
+            //Type 0x20 is a Stop
+            else if(msg_Format.type == 0x20)
+            {
+                msg_Format._20_count++;
+                unsigned int num_received = (msg_Format.msgNum1 << 8) + msg_Format.msgNum2;
+                if(msg_Format._20_count != num_received)
+                {
+                    //Handle error message
+                    unsigned char message[10] = {0x81, 'M', 0x06, 0, 0, 'C', 'O', 'F', 'F', 0x88};
+                    sendMsgToWIFLY(message, 10);
+                    //Re-synch with sent message
+                    msg_Format._20_count = num_received;
+                }
+                else
+                {
+                    pushLengthCommand(0xFF000000);
+                    pushDataQ('S');
+                }
+            }
+            
+            //Type 0x21 is a forward
+            else if(msg_Format.type == 0x21)
+            {
+                msg_Format._21_count++;
+                unsigned int num_received = (msg_Format.msgNum1 << 8) + msg_Format.msgNum2;
+                if(msg_Format._21_count != num_received)
+                {
+                    //Handle error message
+                    unsigned char message[10] = {0x81, 'M', 0x06, 0, 0, 'C', 'O', 'F', 'F', 0x88};
+                    sendMsgToWIFLY(message, 10);
+                    //Re-synch with sent message
+                    msg_Format._21_count = num_received;
+                }
+                else
+                {
+                    pushLengthCommand((0xFF000000 | (msg_Format.data1 << 8) | msg_Format.data2));
+                    pushDataQ('F');
+                }
+            }
+            
+            //type 0x22 is a backward
+            else if(msg_Format.type == 0x22)
+            {
+                msg_Format._22_count++;
+                unsigned int num_received = (msg_Format.msgNum1 << 8) + msg_Format.msgNum2;
+                if(msg_Format._22_count != num_received)
+                {
+                    //Handle error message
+                    unsigned char message[10] = {0x81, 'M', 0x06, 0, 0, 'C', 'O', 'F', 'F', 0x88};
+                    sendMsgToWIFLY(message, 10);
+                    //Re-synch with sent message
+                    msg_Format._22_count = num_received;
+                }
+                else
+                {
+                    pushLengthCommand((0xFF000000 | (msg_Format.data1 << 8) | msg_Format.data2));
+                    pushDataQ('B');
+                }
+            }
+            
+            //type 0x23 is left
+            else if(msg_Format.type == 0x23)
+            {
+                msg_Format._23_count++;
+                unsigned int num_received = (msg_Format.msgNum1 << 8) + msg_Format.msgNum2;
+                if(msg_Format._23_count != num_received)
+                {
+                    //Handle error message
+                    unsigned char message[10] = {0x81, 'M', 0x06, 0, 0, 'C', 'O', 'F', 'F', 0x88};
+                    sendMsgToWIFLY(message, 10);
+                    //Re-synch with sent message
+                    msg_Format._23_count = num_received;
+                }
+                else
+                {
+                    pushLengthCommand((0xF0F00000 | (msg_Format.data1 << 8) | msg_Format.data2));
+                    pushDataQ('L');
+                }
+            }
+            
+            //type 0x24 is right
+            else if(msg_Format.type == 0x24)
+            {
+                msg_Format._24_count++;
+                unsigned int num_received = (msg_Format.msgNum1 << 8) + msg_Format.msgNum2;
+                if(msg_Format._24_count != num_received)
+                {
+                    //Handle error message
+                    unsigned char message[10] = {0x81, 'M', 0x06, 0, 0, 'C', 'O', 'F', 'F', 0x88};
+                    sendMsgToWIFLY(message, 10);
+                    //Re-synch with sent message
+                    msg_Format._24_count = num_received;
+                }
+                else
+                {
+                    pushLengthCommand((0xF0F00000 | (msg_Format.data1 << 8) | msg_Format.data2));
+                    pushDataQ('R');
                 }
             }
             

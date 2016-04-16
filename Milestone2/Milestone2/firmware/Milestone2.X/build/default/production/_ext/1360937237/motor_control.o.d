@@ -183,11 +183,12 @@ build/default/production/_ext/1360937237/motor_control.o:  \
  ../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include/timers.h  \
  ../../../../../../../microchip/harmony/v1_06_02/third_party/rtos/FreeRTOS/Source/include/task.h  \
  ../src/debugging_task_public.h  \
-../src/debugging_task.h  \
- ../src/messaging_task.h  \
+../src/motor_control_public.h  \
+ ../src/debugging_task.h  \
+../src/messaging_task.h  \
 ../src/sensor_read.h  \
-../src/simulation.h  \
- ../src/motor_control.h  \
+ ../src/simulation.h  \
+../src/motor_control.h  \
  ../../../../../../../../../microchip/harmony/v1_06_02/framework/peripheral/oc/plib_oc.h  \
  ../../../../../../../../../microchip/harmony/v1_06_02/framework/peripheral/oc/processor/oc_processor.h  \
  ../../../../../../../../../microchip/harmony/v1_06_02/framework/peripheral/oc/processor/oc_p32xxxx.h  \

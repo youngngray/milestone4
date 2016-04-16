@@ -54,6 +54,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 
 #include "motor_control.h"
+#include "motor_control_public.h"
 #include "peripheral/oc/plib_oc.h"
 
 // *****************************************************************************
@@ -97,9 +98,20 @@ MOTOR_CONTROL_DATA motor_controlData;
 /* TODO:  Add any necessary local functions.
 */
 //Push onto the q from the ISR
-void pushEncoderFromISR(unsigned int dataValue)
+BaseType_t pushEncoderFromISR(unsigned int dataValue)
 {
-    BaseType_t dataRecv = xQueueSendToBackFromISR(motor_controlData.encoder_q, &dataValue, NULL );
+    BaseType_t taskWoken = pdFALSE;
+    BaseType_t dataRecv = xQueueSendToBackFromISR(motor_controlData.encoder_q, &dataValue, &taskWoken );
+    if (dataRecv == pdFALSE) {
+        stopEverything();
+    }
+    return taskWoken;
+}
+
+//Give a distance to move
+void pushLengthCommand(unsigned int dataValue)
+{
+    BaseType_t dataRecv = xQueueSendToBack(motor_controlData.encoder_q, &dataValue, portMAX_DELAY);
     if (dataRecv == pdFALSE) {
         stopEverything();
     }
@@ -133,6 +145,7 @@ void MOTOR_CONTROL_Initialize ( void )
     motor_controlData.rwheelint = 0;
     motor_controlData.lwheelpwm = 75;
     motor_controlData.rwheelpwm = 75;
+    motor_controlData.stopped = 1;
     //Create the queue
     motor_controlData.encoder_q = xQueueCreate(10, sizeof(unsigned int));
     //Ensure queue was created. If not, do not continue and turn on LED
@@ -152,7 +165,8 @@ void MOTOR_CONTROL_Initialize ( void )
   Remarks:
     See prototype in motor_control.h.
  */
-
+unsigned int distance = 0;
+unsigned int total = 0;
 void MOTOR_CONTROL_Tasks ( void )
 {
     /* Check the application's current state. */
@@ -175,14 +189,54 @@ void MOTOR_CONTROL_Tasks ( void )
             {
                 stopEverything();
             }
+            //Calculation for straight motion
+            if((data & 0xFF000000) == 0xFF000000)
+            {
+                distance = data & 0xFFFF;
+                distance = (6 * distance * distance) +
+                        (69003 * distance) - 16480;
+                distance = distance / 10000;
+                total = distance;
+                total = total / 2;
+            }
+            //Calculation for a turn
+            if((data & 0xF0F00000) == 0xF0F00000)
+            {
+                distance = data & 0xFFFF;
+                distance = distance * 100;
+                distance = distance / 182;
+                total = distance;
+                total = total / 2;
+            }
             
             if((data & 0xFF00) == 0xF000)
             {
                 motor_controlData.lwheelint += 1;
+                if(distance != 0)
+                {
+                    distance -= 1;
+                    if(distance == total)
+                    {
+                        unsigned char message4[10] = {0x81, 'C', 0x25, 0, 1, 0, 0, 0, 0, 0x88};
+                        //sendMsgToWIFLY(message4, 10);
+                    }
+                }
             }
             else if((data & 0xFF00) == 0x0F00)
             {
                 motor_controlData.rwheelint += 1;
+            }
+            
+            if(distance == 0 && !motor_controlData.stopped)
+            {
+                motor_controlData.stopped = 1;
+                unsigned char message4[10] = {0x81, 'C', 0x26, 0, 1, 0, 0, 0, 0, 0x88};
+                sendMsgToWIFLY(message4, 10);
+                stop();
+            }
+            if(distance != 0)
+            {
+                motor_controlData.stopped = 0;
             }
             
             if(motor_controlData.rwheelint > (motor_controlData.lwheelint + 1))

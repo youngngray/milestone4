@@ -91,7 +91,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #define SYS_INT                     true
 
 /*** Ports System Service Configuration ***/
-#define SYS_PORT_AD1PCFG        ~0xffff
+#define SYS_PORT_AD1PCFG        ~0xf7ff
 #define SYS_PORT_CNPUE          0x0
 #define SYS_PORT_CNEN           0x0
 
@@ -107,7 +107,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #define SYS_PORT_C_LAT          0x0
 #define SYS_PORT_C_ODC          0x0
 
-#define SYS_PORT_D_TRIS         0xfeb4
+#define SYS_PORT_D_TRIS         0xf6b7
 #define SYS_PORT_D_LAT          0x0
 #define SYS_PORT_D_ODC          0x0
 
@@ -119,7 +119,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #define SYS_PORT_F_LAT          0x0
 #define SYS_PORT_F_ODC          0x0
 
-#define SYS_PORT_G_TRIS         0x82cd
+#define SYS_PORT_G_TRIS         0x824d
 #define SYS_PORT_G_LAT          0x0
 #define SYS_PORT_G_ODC          0x0
 

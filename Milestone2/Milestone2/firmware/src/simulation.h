@@ -94,6 +94,12 @@ typedef enum
             SIMULATION_STATE_SECOND=2,
             SIMULATION_STATE_THIRD=3,
             SIMULATION_STATE_FOURTH=4,
+            SIMULATION_STATE_FIFTH =5,
+            SIMULATION_STATE_6 =6,
+            SIMULATION_STATE_7 =7,
+            SIMULATION_STATE_8 =8,
+            SIMULATION_STATE_9 =9,
+            SIMULATION_STATE_10 =10,
 
 } SIMULATION_STATES;
 

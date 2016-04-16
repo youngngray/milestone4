@@ -56,7 +56,7 @@ typedef enum
 } MESSAGING_TASK_STATES;
 
 int isQueueEmpty();
-unsigned char messageQ();
+unsigned char messageQ(BaseType_t *taskWoken);
 /*******************************************************************************
   Function:
     void vTimerCallback( TimerHandle_t pxTimer )
@@ -124,9 +124,16 @@ typedef struct
     unsigned char data4;
     unsigned char footer;
     unsigned char valid;
-    int command_count;
+    unsigned int command_count;
+    unsigned int _20_count;
+    unsigned int _21_count;
+    unsigned int _22_count;
+    unsigned int _23_count;
+    unsigned int _24_count;
     int token_pickup;
     int debug_count;
+    int half_count;
+    int done_count;
     int numInvalid;
 } MESSAGE_FORMAT;
 

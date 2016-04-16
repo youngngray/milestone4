@@ -200,7 +200,6 @@ void APP_Initialize ( void )
     
     /* Initialization is done, allow the state machine to continue */
     appData.state = APP_STATE_OUTPUT;
-    //right();
 }
 
 
@@ -225,7 +224,10 @@ void APP_Tasks ( void )
          * if necessary */
         case APP_STATE_OUTPUT:
         {
+            
             debugChar(start_app_state_output);
+            
+            /* OLD CODE: IGNORE
             unsigned char forw[10] = {0x81,'L',0x07,0x00,0x00,'F',0x00,0x00,0x00,0x88};
             unsigned char ba[10] = {0x81,'L',0x07,0x00,0x00,'B',0x00,0x00,0x00,0x88};
             unsigned char st[10] = {0x81,'L',0x07,0x00,0x00,'S',0x00,0x00,0x00,0x88};
@@ -235,7 +237,7 @@ void APP_Tasks ( void )
             unsigned char message[10] = {0x81, 'L', 0x04, 0, 1, 'F', 'N', 'D', 'T', 0x88};
             //sendMsgToWIFLY(message, 10);
             //sendMsgToWIFLY(pickup_token, 10);
-
+             */
             unsigned char command;
             BaseType_t received = xQueueReceive(appData.data_q,
                     &command, portMAX_DELAY);

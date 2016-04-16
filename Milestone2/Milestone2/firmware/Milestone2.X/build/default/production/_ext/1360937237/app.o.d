@@ -188,4 +188,5 @@ build/default/production/_ext/1360937237/app.o:  \
  ../src/sensor_read.h  \
 ../src/simulation.h  \
 ../src/motor_control.h  \
- ../src/app_public.h 
+ ../src/motor_control_public.h  \
+../src/app_public.h 

@@ -13,7 +13,7 @@ extern "C" {
 #endif
     void sendMsgToWIFLY(unsigned char message[],int num);
     void sendByteToWIFLY(unsigned char byte);
-    void ReceiveUSARTMsgFromMsgQ(unsigned char usartMsg);
+    BaseType_t ReceiveUSARTMsgFromMsgQ(unsigned char usartMsg);
 
 #ifdef	__cplusplus
 }

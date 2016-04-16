@@ -67,6 +67,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "debugging_task.h"
 #include "messaging_task.h"
 #include "system_definitions.h"
+#include "motor_control_public.h"
 
 //Local variables
 unsigned int lwheelint = 0;
@@ -76,20 +77,24 @@ unsigned int rwheelint = 0;
 void IntHandlerDrvTmrInstance0(void)
 {
     lwheelint += 1;
-    pushEncoderFromISR((0xF000 | lwheelint));
+    BaseType_t taskWoken = pdFALSE;
+    taskWoken = pushEncoderFromISR((0xF000 | lwheelint));
     if(lwheelint >= 200)
     {
         lwheelint = 0;
         rwheelint = 0;
     }
     PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_3);
+    
+    //portEND_SWITCHING_ISR(taskWoken);
 }
 
 //The interrupt for the timer counter storing right wheel encoder data
 IntHandlerDrvTmrInstance1(void)
 {
     rwheelint += 1;
-    pushEncoderFromISR((0x0F00 | rwheelint));
+    BaseType_t taskWoken = pdFALSE;
+    taskWoken = pushEncoderFromISR((0x0F00 | rwheelint));
     if(rwheelint >= 200)
     {
         lwheelint = 0;
@@ -97,6 +102,7 @@ IntHandlerDrvTmrInstance1(void)
     }
     //DRV_OC0_Stop();
     PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_4);
+    //portEND_SWITCHING_ISR(taskWoken);
 }
 
 IntHandlerDrvTmrInstance2(void)
@@ -106,6 +112,7 @@ IntHandlerDrvTmrInstance2(void)
 
 void IntHandlerDrvUsartInstance0(void)
 {
+    BaseType_t taskWoken = pdFALSE;
     //Check for any USART data
     /* Clear pending interrupt */
     if(!isQueueEmpty())
@@ -113,7 +120,7 @@ void IntHandlerDrvUsartInstance0(void)
         
         while (!isQueueEmpty() && !PLIB_USART_TransmitterBufferIsFull(USART_ID_1)) {
             unsigned char data = 0x00;
-            data = messageQ();
+            data = messageQ(&taskWoken);
             debugChar(before_usart_transmit);
             PLIB_USART_TransmitterByteSend(USART_ID_1, data);
             debugChar(after_usart_transmit);
@@ -129,7 +136,7 @@ void IntHandlerDrvUsartInstance0(void)
         unsigned char byte = 0x00; 
         byte= PLIB_USART_ReceiverByteReceive(USART_ID_1);
 //        sendByteToWIFLY(byte);
-        ReceiveUSARTMsgFromMsgQ(byte);
+        taskWoken = ReceiveUSARTMsgFromMsgQ(byte);
 //        PLIB_USART_TransmitterByteSend(USART_ID_1, byte);
         //unsigned char byte = 0x00; 
         //byte= PLIB_USART_ReceiverByteReceive(USART_ID_1);
@@ -137,6 +144,7 @@ void IntHandlerDrvUsartInstance0(void)
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_USART_1_TRANSMIT);
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_USART_1_RECEIVE);
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_USART_1_ERROR);
+    portEND_SWITCHING_ISR(taskWoken);
 }
 
  

@@ -120,6 +120,7 @@ typedef struct
     unsigned int rwheelint;
     unsigned char lwheelpwm;
     unsigned char rwheelpwm;
+    unsigned char stopped;
 
 } MOTOR_CONTROL_DATA;
 

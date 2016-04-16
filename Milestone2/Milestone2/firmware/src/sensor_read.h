@@ -115,6 +115,8 @@ typedef struct
 
     /* TODO: Define any additional data used by the application. */
     unsigned char token_found;
+    unsigned char tokens;
+    unsigned char history;
 
 } SENSOR_READ_DATA;
 

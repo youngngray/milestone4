@@ -29,7 +29,8 @@ extern "C" {
     // *****************************************************************************
     // *****************************************************************************
     
-    void pushEncoderFromISR(unsigned int dataValue);
+    BaseType_t pushEncoderFromISR(unsigned int dataValue);
+    void pushLengthCommand(unsigned int dataValue);
     
     /* Provide C++ Compatibility */
 #ifdef __cplusplus

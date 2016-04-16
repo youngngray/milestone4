@@ -187,5 +187,7 @@ build/default/production/_ext/1688732426/system_interrupt.o:  \
  ../src/sensor_read.h  \
 ../src/simulation.h  \
 ../src/motor_control.h  \
- ../src/app_public.h  \
-../src/system_config/default/system_definitions.h 
+ ../src/motor_control_public.h  \
+../src/app_public.h  \
+ ../src/system_config/default/system_definitions.h  \
+ ../src/motor_control_public.h 

@@ -62,6 +62,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "queue.h"
 #include "timers.h"
 #include "debugging_task_public.h"
+#include "motor_control_public.h"
 
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility

@@ -54,6 +54,9 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // *****************************************************************************
 
 #include "sensor_read.h"
+#include "simulation.h"
+#include "messaging_task.h"
+#include "messaging_task_public.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -120,6 +123,8 @@ void SENSOR_READ_Initialize ( void )
      * parameters.
      */
     sensor_readData.token_found = 0;
+    sensor_readData.tokens = 0;
+    sensor_readData.history = 0;
     
     sensor_readData.state = SENSOR_READ_STATE_CAPTURE;
 }
@@ -153,7 +158,6 @@ void SENSOR_READ_Tasks ( void )
             //2. Set I/O Line to an Output and Drive it High
             //               This code works because the necessary pins are
             //                      already configured as outputs in harmony.
-            PLIB_PORTS_DirectionOutputSet( PORTS_ID_0, PORT_CHANNEL_B,  SYS_PORT_B_TRIS ^ 0xFFFF);
             PLIB_PORTS_DirectionOutputSet( PORTS_ID_0, PORT_CHANNEL_G,  SYS_PORT_G_TRIS ^ 0xFFFF);
             PLIB_PORTS_DirectionOutputSet( PORTS_ID_0, PORT_CHANNEL_A,  SYS_PORT_A_TRIS ^ 0xFFFF);
             PLIB_PORTS_DirectionOutputSet( PORTS_ID_0, PORT_CHANNEL_F,  SYS_PORT_F_TRIS ^ 0xFFFF);
@@ -162,66 +166,100 @@ void SENSOR_READ_Tasks ( void )
             PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_B, PORTS_BIT_POS_13, 1);
             PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_B, PORTS_BIT_POS_12, 1);
             PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_8, 1);
+            PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_G, PORTS_BIT_POS_7, 1);
             PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_A, PORTS_BIT_POS_10, 1);
             PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_F, PORTS_BIT_POS_0, 1);
             PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_F, PORTS_BIT_POS_1, 1);
             PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_6, 1);
             PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_8, 1);
+            PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_11, 1);
             //3. Allow some time to pass for sensor output to rise
             vTaskDelay(1);
             //4. Make the I/O Line an input (HI-Z)
-            PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_B, 0x3000);
-            PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_G, 0x0100);
+            PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_G, 0x0180);
             PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_A, 0x0400);
             PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_F, 0x0003);
-            PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_D, 0x0140);
+            PLIB_PORTS_DirectionInputSet(PORTS_ID_0, PORT_CHANNEL_D, 0x0940);
             
             //5. Measure voltage to go low.
             
             /* TWEAK THIS VALUE TO CHANGE SENSITIVITY OF SENSOR */
             /*I am simply waiting 15ms then measuring. If the value is low, we
              are on white, if the value is high, then we are on black.*/
-            vTaskDelay(25);
+            //Lower detects more
+            vTaskDelay(15);
             
             unsigned int read[5] = {0};
-            read[0] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_B);
             read[1] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_G);
             read[2] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_A);
             read[3] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_F);
             read[4] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_D);
             unsigned char count = 0;
             //If any 2 of 8 is true, then count as success
-            if(read[0] & 0x1000)
+            if(read[1] & 0x0080)
+            {
                 count++;
-            if(read[0] & 0x2000)
+            }
+            if(read[4] & 0x0800)
+            {
                 count++;
+            }
             if(read[1] & 0x0100)
+            {
                 count++;
+            }
             if(read[2] & 0x0400)
+            {
                 count++;
+            }
             if(read[3] & 0x0001)
+            {
                 count++;
+            }
             if(read[3] & 0x0002)
+            {
                 count++;
+            }
             if(read[4] & 0x0040)
+            {
                 count++;
+            }
             if(read[4] & 0x0100)
+            {
                 count++;
+            }
+            
             if(count >= 2)
             {
-                if(!sensor_readData.token_found)
+                sensor_readData.history = (sensor_readData.history << 1) + 1;
+                if(sensor_readData.history == 0xFF)
                 {
-                    //stop();
-                    unsigned char message[10] = {0x81, 'C', 0x01, 0, 0, 0, 0, 0, 0, 0x88};
-                    sendMsgToWIFLY(message, 10);
-                    sensor_readData.token_found = 1;
+                    if(!sensor_readData.token_found)
+                    {
+                        unsigned char message[10] = {0x81, 'C', 0x01, 0, 0, 0, 0, 0, 0, 0x88};
+                        sendMsgToWIFLY(message, 10);
+                        PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_3, 1);
+                        sensor_readData.tokens += 1;
+                        sensor_readData.token_found = 1;
+                        if(sensor_readData.tokens == 3)
+                        {
+                            vTaskDelay(25);
+                            unsigned char message[10] = {0x81, 'L', 0x20, 0, 1, 0, 0, 0, 0, 0x88};
+                            sendMsgToWIFLY(message, 10);
+                        }
+                    }
                 }
             }
             else
             {
-                sensor_readData.token_found = 0;
-                //forward();
+                sensor_readData.history = (sensor_readData.history << 1) + 0;
+                if(sensor_readData.history == 0x00)
+                {
+                    PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_3, 0);
+                    sensor_readData.token_found = 0;
+                }
             }
+            
             //6. Turn off sensor
             PLIB_PORTS_PinWrite(PORTS_ID_0 , PORT_CHANNEL_B, PORTS_BIT_POS_11, 0);
             break;
