@@ -204,7 +204,7 @@ void MOTOR_CONTROL_Tasks ( void )
             {
                 distance = data & 0xFFFF;
                 distance = distance * 100;
-                distance = distance / 182;
+                distance = distance / 173;
                 total = distance;
                 total = total / 2;
             }
@@ -230,7 +230,7 @@ void MOTOR_CONTROL_Tasks ( void )
             if(distance == 0 && !motor_controlData.stopped)
             {
                 motor_controlData.stopped = 1;
-                unsigned char message4[10] = {0x81, 'C', 0x26, 0, 1, 0, 0, 0, 0, 0x88};
+                unsigned char message4[10] = {0x81, 'M', 0x26, 0, 1, 0, 0, 0, 0, 0x88};
                 sendMsgToWIFLY(message4, 10);
                 stop();
             }

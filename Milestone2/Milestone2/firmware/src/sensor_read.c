@@ -187,7 +187,7 @@ void SENSOR_READ_Tasks ( void )
             /*I am simply waiting 15ms then measuring. If the value is low, we
              are on white, if the value is high, then we are on black.*/
             //Lower detects more
-            vTaskDelay(15);
+            vTaskDelay(18);
             
             unsigned int read[5] = {0};
             read[1] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_G);
@@ -195,6 +195,10 @@ void SENSOR_READ_Tasks ( void )
             read[3] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_F);
             read[4] = PLIB_PORTS_Read(PORTS_ID_0, PORT_CHANNEL_D);
             unsigned char count = 0;
+            
+            //6. Turn off sensor
+            PLIB_PORTS_PinWrite(PORTS_ID_0 , PORT_CHANNEL_B, PORTS_BIT_POS_11, 0);
+            
             //If any 2 of 8 is true, then count as success
             if(read[1] & 0x0080)
             {
@@ -236,7 +240,7 @@ void SENSOR_READ_Tasks ( void )
                 {
                     if(!sensor_readData.token_found)
                     {
-                        unsigned char message[10] = {0x81, 'C', 0x01, 0, 0, 0, 0, 0, 0, 0x88};
+                        unsigned char message[10] = {0x81, 'M', 0x01, 0, 0, 0, 0, 0, 0, 0x88};
                         sendMsgToWIFLY(message, 10);
                         PLIB_PORTS_PinWrite(PORTS_ID_0, PORT_CHANNEL_D, PORTS_BIT_POS_3, 1);
                         sensor_readData.tokens += 1;
@@ -263,8 +267,7 @@ void SENSOR_READ_Tasks ( void )
                 }
             }
             
-            //6. Turn off sensor
-            PLIB_PORTS_PinWrite(PORTS_ID_0 , PORT_CHANNEL_B, PORTS_BIT_POS_11, 0);
+            
             break;
         }
         /* The default state should never be executed. */
